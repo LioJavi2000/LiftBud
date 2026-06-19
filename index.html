@@ -985,7 +985,10 @@ const IMGS = {
   standingCalfRaise:"https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_030857_24a8febc-4922-46f1-87f6-7a6dbb2b8cd5.png",
   backExtension:    "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_032107_11cdd21e-4b6e-4a44-84ca-f4ca86c4075d.jpeg",
   rearDeltFly:      "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_032113_d14f23e4-3701-4670-b6f4-c7ccc076aa3b.jpeg",
-  abCrunch:         "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_032119_f7668c69-1e4d-4a35-89f4-675637cd90b7.jpeg"
+  abCrunch:         "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_032119_f7668c69-1e4d-4a35-89f4-675637cd90b7.jpeg",
+  facePull:         "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_174623_b87cfc8f-9dd0-401c-9e84-9a835915ae43.png",
+  reverseFly:       "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_174822_24150329-dd05-4cd6-bb6c-8d5afd7163e0.png",
+  wristExtension:   "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_174823_a0270ae5-09f7-463b-b386-4e0f968de0bd.png"
 };
 
 /* ─────────────────────────────────────────────
@@ -996,7 +999,7 @@ const WORKOUTS = {
     title: "Monday",
     label: "Upper Body",
     focus: "Strength Focus",
-    duration: "~55 min",
+    duration: "~60 min",
     shortType: "Upper",
     exercises: [
       { id:"m1", name:"Chest Press Machine", equipment:"machine", sets:3, reps:"8–10", rest:"90 sec", weight:"8–10 lbs",
@@ -1007,6 +1010,10 @@ const WORKOUTS = {
         muscles:"Back (lats), biceps",
         tip:"Pull the bar to your upper chest, not behind your neck. Lean back slightly and squeeze your lats at the bottom.",
         svg:"latPulldown" },
+      { id:"m2b", name:"Face Pull (Cable)", equipment:"machine", sets:3, reps:"10–12", rest:"60 sec", weight:"8–10 lbs",
+        muscles:"Upper/middle back, traps, rhomboids, rear delts",
+        tip:"Use a rope attachment at face height. Pull it toward your face with elbows flared high. This directly targets shoulder blade control and the muscles that get neglected from all the pushing movements.",
+        svg:"facePull" },
       { id:"m3", name:"Shoulder Press Machine", equipment:"machine", sets:3, reps:"8–10", rest:"90 sec", weight:"8–10 lbs",
         muscles:"Shoulders (deltoids), triceps",
         tip:"Don't lock your elbows at the top. Keep the movement smooth and controlled.",
@@ -1083,7 +1090,7 @@ const WORKOUTS = {
     title: "Thursday",
     label: "Upper Body",
     focus: "Hypertrophy / Volume Focus",
-    duration: "~60 min",
+    duration: "~65 min",
     shortType: "Upper+",
     exercises: [
       { id:"th1", name:"Cable Fly / Pec Deck Machine", equipment:"machine", sets:4, reps:"12–15", rest:"60 sec", weight:"8–10 lbs",
@@ -1106,6 +1113,14 @@ const WORKOUTS = {
         muscles:"Abs (rectus abdominis)",
         tip:"Curl your ribs toward your hips, don't just lean forward. Slow and controlled — this builds visible ab definition, not just core strength.",
         svg:"abCrunch" },
+      { id:"th3d", name:"Reverse Fly Machine", equipment:"machine", sets:3, reps:"12–15", rest:"45 sec", weight:"8 lbs",
+        muscles:"Rear delts (posterior deltoids), upper back",
+        tip:"Sit facing the pad, arms forward, then spread them out wide to the sides. Focus on squeezing your shoulder blades together at the end. This isolates the rear delt more than the rear delt fly.",
+        svg:"reverseFly" },
+      { id:"th3e", name:"Wrist Extension (Dumbbell)", equipment:"dumbbell", sets:3, reps:"12–15 each arm", rest:"30 sec", weight:"5 lbs",
+        muscles:"Forearm extensors",
+        tip:"Sit on a bench, rest your forearm on your thigh with your hand hanging past your knee, palm facing down. Curl the dumbbell upward using only your wrist. These are the muscles opposite your forearm flexors — often ignored and easily strained without training.",
+        svg:"wristExtension" },
       { id:"th4", name:"Hammer Curl (Dumbbell)", equipment:"dumbbell", sets:3, reps:"12–15", rest:"45 sec", weight:"8–10 lbs",
         muscles:"Brachialis, brachioradialis, biceps",
         tip:"These two go back to back for a full bicep pump — hammer curls hit the thickness, preacher curls hit the peak. Go lighter today and really feel every rep.",
