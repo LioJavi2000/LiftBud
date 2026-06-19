@@ -116,6 +116,21 @@ a{color:inherit;text-decoration:none}
 .rest-title{font-size:20px;font-weight:800;margin-bottom:8px}
 .rest-body{font-size:13px;color:var(--text2);line-height:1.7;max-width:300px;margin:0 auto}
 
+/* ── Warm-Up & Cooldown ── */
+.wc-section{margin-bottom:20px}
+.wc-section.cooldown-section{margin-top:24px;margin-bottom:0}
+.wc-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.wc-icon{font-size:16px}
+.wc-title{font-size:12px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase}
+.warmup-section .wc-title{color:#f97316}
+.cooldown-section .wc-title{color:#22d3ee}
+.wc-item{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:13px 15px;margin-bottom:7px}
+.wc-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px}
+.wc-detail{font-size:11px;font-weight:600;color:var(--text3);margin-bottom:8px;letter-spacing:.3px}
+.warmup-section .wc-detail{color:#f97316}
+.cooldown-section .wc-detail{color:#22d3ee}
+.wc-tip{font-size:12px;color:var(--text2);line-height:1.6;padding-left:10px;border-left:2px solid var(--border)}
+
 /* ── Mobile ── */
 @media(max-width:480px){
   .week-grid{gap:4px}
@@ -981,7 +996,7 @@ const WORKOUTS = {
     title: "Monday",
     label: "Upper Body",
     focus: "Strength Focus",
-    duration: "~45 min",
+    duration: "~55 min",
     shortType: "Upper",
     exercises: [
       { id:"m1", name:"Chest Press Machine", equipment:"machine", sets:3, reps:"8–10", rest:"90 sec", weight:"8–10 lbs",
@@ -1008,13 +1023,23 @@ const WORKOUTS = {
         muscles:"Triceps",
         tip:"Keep your elbows locked to your sides. Fully extend at the bottom and squeeze.",
         svg:"tricepPushdown" }
+    ],
+    warmup: [
+      { name:"Treadmill or Stationary Bike", detail:"3 min", tip:"Easy pace, just get your heart rate up and body warm." },
+      { name:"Arm Circles", detail:"1 min (30 sec each direction)", tip:"Loosens up your shoulders before pressing." },
+      { name:"Push-Ups (or knee push-ups)", detail:"5–8 reps", tip:"Warms up chest, shoulders, and triceps together — exactly what you're about to train." }
+    ],
+    cooldown: [
+      { name:"Chest Doorway Stretch", detail:"30 sec each side", tip:"Opens up the chest after all that pressing." },
+      { name:"Cross-Body Shoulder Stretch", detail:"30 sec each arm", tip:"Relieves shoulder tightness from pressing and curling." },
+      { name:"Bicep Wall Stretch", detail:"20 sec each arm", tip:"Gently stretches the bicep after curls." }
     ]
   },
   tuesday: {
     title: "Tuesday",
     label: "Lower Body",
     focus: "Strength Focus",
-    duration: "~45 min",
+    duration: "~55 min",
     shortType: "Lower",
     exercises: [
       { id:"t1", name:"Leg Press Machine", equipment:"machine", sets:3, reps:"8–10", rest:"90 sec", weight:"10 lbs",
@@ -1041,6 +1066,16 @@ const WORKOUTS = {
         muscles:"Lower back (erector spinae), glutes, hamstrings",
         tip:"Cross your arms over your chest. Lower slowly until you feel a stretch, then raise until your body is in a straight line — don't arch past that. Controlled and slow, this isn't a heavy-weight movement.",
         svg:"backExtension" }
+    ],
+    warmup: [
+      { name:"Treadmill or Stationary Bike", detail:"3 min", tip:"Easy pace, gets blood flowing to your legs." },
+      { name:"Bodyweight Squats", detail:"15 reps", tip:"Wakes up your quads and glutes before loading any weight." },
+      { name:"Walking Lunges (no weight)", detail:"10 each leg", tip:"Warms up hips and hamstrings through a full range of motion." }
+    ],
+    cooldown: [
+      { name:"Standing Quad Stretch", detail:"30 sec each leg", tip:"Stretches the quad you just pressed and extended." },
+      { name:"Seated Hamstring Stretch", detail:"30 sec each leg", tip:"Releases tightness from leg curls." },
+      { name:"Child's Pose", detail:"30 sec", tip:"Gently decompresses your lower back after back extensions." }
     ]
   },
   wednesday: null,
@@ -1048,7 +1083,7 @@ const WORKOUTS = {
     title: "Thursday",
     label: "Upper Body",
     focus: "Hypertrophy / Volume Focus",
-    duration: "~50 min",
+    duration: "~60 min",
     shortType: "Upper+",
     exercises: [
       { id:"th1", name:"Cable Fly / Pec Deck Machine", equipment:"machine", sets:4, reps:"12–15", rest:"60 sec", weight:"8–10 lbs",
@@ -1083,13 +1118,23 @@ const WORKOUTS = {
         muscles:"Triceps (long head)",
         tip:"Elbows stay pointed forward. Extend fully overhead. This hits the long head of the tricep — the biggest part.",
         svg:"overheadTricep" }
+    ],
+    warmup: [
+      { name:"Treadmill or Stationary Bike", detail:"3 min", tip:"Easy pace to raise your body temperature." },
+      { name:"Arm Circles", detail:"1 min (30 sec each direction)", tip:"Same as Monday — get the shoulders moving first." },
+      { name:"Scapular Push-Ups (or regular push-ups)", detail:"8 reps", tip:"Activates your shoulder blades and back before rows and flys." }
+    ],
+    cooldown: [
+      { name:"Chest Doorway Stretch", detail:"30 sec each side", tip:"Chest needs it after fly and press work." },
+      { name:"Cross-Body Rear Delt Stretch", detail:"30 sec each arm", tip:"Targets the rear delts you just trained." },
+      { name:"Bicep Wall Stretch", detail:"20 sec each arm", tip:"Stretches biceps after hammer and preacher curls." }
     ]
   },
   friday: {
     title: "Friday",
     label: "Lower Body",
     focus: "Hypertrophy / Volume Focus",
-    duration: "~45 min",
+    duration: "~55 min",
     shortType: "Lower+",
     exercises: [
       { id:"f1", name:"Hack Squat Machine", equipment:"machine", sets:4, reps:"12–15", rest:"60 sec", weight:"10 lbs",
@@ -1112,6 +1157,16 @@ const WORKOUTS = {
         muscles:"Calves",
         tip:"Slow down. 2 seconds up, 2 seconds down. Calves are stubborn — full range and volume beats heavy weight.",
         svg:"standingCalfRaise" }
+    ],
+    warmup: [
+      { name:"Treadmill or Stationary Bike", detail:"3 min", tip:"Easy pace to get blood flowing before leg volume work." },
+      { name:"Bodyweight Squats", detail:"15 reps", tip:"Same activation as Tuesday before loading the legs again." },
+      { name:"Glute Bridges", detail:"15 reps", tip:"Wakes up the glutes before kickbacks and hack squats." }
+    ],
+    cooldown: [
+      { name:"Standing Quad Stretch", detail:"30 sec each leg", tip:"Same as Tuesday — quads need this after hack squats." },
+      { name:"Seated Hamstring Stretch", detail:"30 sec each leg", tip:"Releases tightness from leg curls." },
+      { name:"Glute Stretch (Figure-4)", detail:"30 sec each leg", tip:"Stretches glutes after kickbacks." }
     ]
   },
   saturday: null,
@@ -1190,6 +1245,33 @@ function selectDay(day) {
 }
 
 /* ─────────────────────────────────────────────
+   RENDER WARM-UP / COOLDOWN
+───────────────────────────────────────────── */
+function renderWarmupSection(items) {
+  if (!items || !items.length) return "";
+  return `<div class="wc-section warmup-section">
+    <div class="wc-header"><span class="wc-icon">🔥</span><span class="wc-title">Warm-Up (5 min)</span></div>
+    ${items.map(it => `<div class="wc-item">
+      <div class="wc-name">${it.name}</div>
+      <div class="wc-detail">${it.detail}</div>
+      <div class="wc-tip">${it.tip}</div>
+    </div>`).join("")}
+  </div>`;
+}
+
+function renderCooldownSection(items) {
+  if (!items || !items.length) return "";
+  return `<div class="wc-section cooldown-section">
+    <div class="wc-header"><span class="wc-icon">🧘</span><span class="wc-title">Cooldown Stretch</span></div>
+    ${items.map(it => `<div class="wc-item">
+      <div class="wc-name">${it.name}</div>
+      <div class="wc-detail">${it.detail}</div>
+      <div class="wc-tip">${it.tip}</div>
+    </div>`).join("")}
+  </div>`;
+}
+
+/* ─────────────────────────────────────────────
    RENDER DAY DETAIL
 ───────────────────────────────────────────── */
 function renderDayDetail() {
@@ -1211,6 +1293,7 @@ function renderDayDetail() {
       </div>
       <div class="time-badge">⏱ ${w.duration}</div>
     </div>
+    ${renderWarmupSection(w.warmup)}
     <div class="progress-card">
       <div class="prog-row">
         <span class="prog-label">Session Progress</span>
@@ -1222,6 +1305,7 @@ function renderDayDetail() {
     <div class="exercises-list" id="exercisesList">
       ${w.exercises.map(ex => renderExercise(ex, done.has(ex.id))).join("")}
     </div>
+    ${renderCooldownSection(w.cooldown)}
   `;
 
   if (doneCount === total && total > 0) {
