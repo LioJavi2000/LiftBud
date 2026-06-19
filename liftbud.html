@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LiftBud — Lio's Gym Plan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0D0D0F;
+  --bg2: #111115;
+  --bg3: #16161c;
+  --accent: #3B82F6;
+  --accent-glow: rgba(59,130,246,0.25);
+  --accent-dim: rgba(59,130,246,0.12);
+  --text: #f0f0f8;
+  --text2: #c4c4de;
+  --text3: #9090b0;
+  --border: #2a2a3a;
+  --success: #10b981;
+  --warn: #f59e0b;
+  --purple: #a78bfa;
+  --purple-dim: rgba(167,139,250,0.12);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;padding-bottom:80px}
+a{color:inherit;text-decoration:none}
+
+/* ── Header ── */
+.app-header{padding:28px 20px 20px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#0f0f18 0%,transparent 100%)}
+.app-header .inner{max-width:820px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{font-size:26px;font-weight:900;letter-spacing:-0.5px}
+.logo .hi{color:var(--accent)}
+.tagline{font-size:12px;color:var(--text3);font-weight:400;letter-spacing:0.2px}
+.user-pill{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--text2)}
+
+/* ── Layout ── */
+.container{max-width:820px;margin:0 auto;padding:24px 16px}
+
+/* ── Section label ── */
+.slabel{font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--text3);margin-bottom:12px}
+
+/* ── Week grid ── */
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:32px}
+.day-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:10px 6px 8px;cursor:pointer;transition:all .18s ease;text-align:center;user-select:none}
+.day-card:hover:not(.rest){border-color:var(--accent);background:var(--bg3)}
+.day-card.active{background:var(--accent-dim);border-color:var(--accent);box-shadow:0 0 18px var(--accent-glow)}
+.day-card.rest{opacity:0.4;cursor:default;pointer-events:none}
+.day-card.today .dname{color:var(--accent)}
+.dname{font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--text2);text-transform:uppercase;margin-bottom:5px}
+.dtype{font-size:8px;font-weight:600;color:var(--text3);line-height:1.4}
+.day-card:not(.rest) .dtype{color:var(--accent)}
+.ddot{width:5px;height:5px;border-radius:50%;background:var(--accent);margin:5px auto 0}
+.day-card.rest .ddot{display:none}
+
+/* ── Day detail ── */
+.day-detail{animation:fadeUp .28s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.detail-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}
+.detail-title{font-size:21px;font-weight:800;letter-spacing:-.4px;line-height:1.2}
+.detail-focus{font-size:13px;color:var(--text2);margin-top:3px;font-weight:400}
+.time-badge{background:var(--accent-dim);border:1px solid rgba(59,130,246,.3);color:var(--accent);padding:5px 13px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;flex-shrink:0}
+
+/* ── Progress ── */
+.progress-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:20px}
+.prog-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-label{font-size:12px;font-weight:600;color:var(--text2)}
+.prog-count{font-size:12px;font-weight:800;color:var(--accent)}
+.prog-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),#60a5fa);border-radius:2px;transition:width .4s ease}
+.completion-msg{display:none;margin-top:10px;padding:10px 14px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25);border-radius:8px;color:var(--success);font-size:13px;font-weight:600;text-align:center}
+
+/* ── Exercise cards ── */
+.exercises-list{display:flex;flex-direction:column;gap:14px}
+.ex-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color .2s}
+.ex-card.done{border-color:rgba(16,185,129,.35);background:rgba(16,185,129,.02)}
+.ex-body{padding:18px}
+.ex-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px}
+.ex-name{font-size:16px;font-weight:700;letter-spacing:-.2px;line-height:1.2}
+.ex-muscles{font-size:11px;color:var(--text3);margin-top:3px;font-weight:500}
+.eq-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;white-space:nowrap;flex-shrink:0}
+.eq-badge.machine{background:var(--purple-dim);border:1px solid rgba(167,139,250,.25);color:var(--purple)}
+.eq-badge.dumbbell{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:var(--warn)}
+
+/* ── Exercise illustration (photo) ── */
+.ex-illustration{width:100%;aspect-ratio:16/9;background:#070710;border-radius:10px;margin-bottom:14px;overflow:hidden;border:1px solid #1a1a28;line-height:0;position:relative}
+.ex-illustration img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s ease}
+.ex-card:hover .ex-illustration img{transform:scale(1.02)}
+
+/* ── Stats ── */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+.stat-pill{background:#0c0c14;border:1px solid var(--border);border-radius:10px;padding:9px 6px;text-align:center}
+.stat-lbl{font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:3px}
+.stat-val{font-size:13px;font-weight:800;color:var(--text)}
+.weight-row{font-size:12px;margin-bottom:12px}
+.weight-row span:first-child{color:var(--text3)}
+.weight-row span:last-child{color:var(--accent);font-weight:700;margin-left:6px}
+
+/* ── Tip ── */
+.tip-box{background:rgba(59,130,246,.05);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 13px;margin-bottom:14px}
+.tip-lbl{font-size:10px;font-weight:800;color:var(--accent);letter-spacing:.8px;margin-bottom:3px}
+.tip-text{font-size:12px;color:var(--text2);line-height:1.65}
+
+/* ── Done checkbox ── */
+.done-row{display:flex;align-items:center;gap:10px;padding-top:12px;border-top:1px solid var(--border);cursor:pointer}
+.chk{width:20px;height:20px;border-radius:6px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all .18s;flex-shrink:0;background:transparent}
+.chk.checked{background:var(--success);border-color:var(--success)}
+.chk.checked::after{content:'✓';color:#fff;font-size:11px;font-weight:800}
+.done-lbl{font-size:12px;color:var(--text3);font-weight:500}
+.ex-card.done .done-lbl{color:var(--success);text-decoration:line-through;opacity:.7}
+
+/* ── Rest day ── */
+.rest-view{text-align:center;padding:56px 24px}
+.rest-emoji{font-size:52px;margin-bottom:16px}
+.rest-title{font-size:20px;font-weight:800;margin-bottom:8px}
+.rest-body{font-size:13px;color:var(--text2);line-height:1.7;max-width:300px;margin:0 auto}
+
+/* ── Mobile ── */
+@media(max-width:480px){
+  .week-grid{gap:4px}
+  .day-card{padding:7px 3px 6px;border-radius:9px}
+  .dname{font-size:8px}
+  .dtype{font-size:7px}
+  .detail-title{font-size:18px}
+  .ex-name{font-size:15px}
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="inner">
+    <div>
+      <div class="logo">Lift<span class="hi">Bud</span> 🏋️</div>
+      <p class="tagline">Your personal gym plan, built for you.</p>
+    </div>
+    <div class="user-pill">👤 Lio</div>
+  </div>
+</header>
+
+<main class="container">
+  <div class="slabel">This Week</div>
+  <div class="week-grid" id="weekGrid"></div>
+  <div id="dayDetail"></div>
+</main>
+
+<script>
+/* ─────────────────────────────────────────────
+   SVG ILLUSTRATIONS
+───────────────────────────────────────────── */
+const SVGS = {
+
+chestPress: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="cg1" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#ef4444" stop-opacity=".45"/><stop offset="100%" stop-color="#ef4444" stop-opacity="0"/></radialGradient></defs>
+<rect width="300" height="200" fill="#07070f"/>
+<!-- weight stack -->
+<rect x="228" y="30" width="34" height="120" rx="4" fill="#111120" stroke="#1e1e30" stroke-width="1"/>
+<rect x="231" y="33" width="28" height="7" rx="2" fill="#1a1a2e"/><rect x="231" y="42" width="28" height="7" rx="2" fill="#1a1a2e"/>
+<rect x="231" y="51" width="28" height="7" rx="2" fill="#3B82F6" opacity=".8"/><rect x="231" y="60" width="28" height="7" rx="2" fill="#1a1a2e"/>
+<rect x="231" y="69" width="28" height="7" rx="2" fill="#1a1a2e"/><rect x="231" y="78" width="28" height="7" rx="2" fill="#1a1a2e"/>
+<!-- frame -->
+<rect x="200" y="25" width="7" height="145" rx="3" fill="#1a1a28"/>
+<rect x="200" y="25" width="-130" height="6" rx="2" fill="#1a1a28"/>
+<!-- seat post + base -->
+<rect x="118" y="158" width="44" height="9" rx="4" fill="#1a3060"/>
+<rect x="130" y="165" width="20" height="18" rx="2" fill="#131325"/>
+<rect x="108" y="180" width="60" height="6" rx="2" fill="#111120"/>
+<!-- backpad -->
+<rect x="132" y="105" width="10" height="56" rx="4" fill="#1a3060"/>
+<!-- machine arms + handles -->
+<line x1="200" y1="105" x2="175" y2="105" stroke="#2a2a40" stroke-width="8" stroke-linecap="round"/>
+<line x1="200" y1="105" x2="200" y2="40" stroke="#2a2a40" stroke-width="7" stroke-linecap="round"/>
+<line x1="100" y1="105" x2="58" y2="117" stroke="#252538" stroke-width="6" stroke-linecap="round"/>
+<circle cx="56" cy="120" r="7" fill="#222235" stroke="#3d3d55" stroke-width="1.5"/>
+<line x1="175" y1="105" x2="215" y2="117" stroke="#252538" stroke-width="6" stroke-linecap="round"/>
+<circle cx="217" cy="120" r="7" fill="#222235" stroke="#3d3d55" stroke-width="1.5"/>
+<!-- person: lower body seated -->
+<rect x="104" y="148" width="18" height="26" rx="4" fill="#1a2338"/>
+<rect x="148" y="148" width="18" height="26" rx="4" fill="#1a2338"/>
+<rect x="106" y="172" width="15" height="20" rx="3" fill="#131a2a"/>
+<rect x="150" y="172" width="15" height="20" rx="3" fill="#131a2a"/>
+<!-- chest glow -->
+<ellipse cx="135" cy="118" rx="26" ry="18" fill="url(#cg1)"/>
+<!-- torso -->
+<path d="M102 108 Q98 110 98 118 L100 148 L170 148 L172 118 Q172 110 168 108 Z" fill="#1e40af"/>
+<!-- arms extended -->
+<rect x="62" y="110" width="40" height="10" rx="5" fill="#c8946a" transform="rotate(12,82,115)"/>
+<rect x="36" y="112" width="28" height="9" rx="4" fill="#c8946a" transform="rotate(-6,50,116)"/>
+<rect x="168" y="110" width="40" height="10" rx="5" fill="#c8946a" transform="rotate(-12,188,115)"/>
+<rect x="200" y="112" width="28" height="9" rx="4" fill="#c8946a" transform="rotate(6,214,116)"/>
+<!-- neck + head -->
+<rect x="129" y="97" width="12" height="12" rx="3" fill="#c8946a"/>
+<circle cx="135" cy="83" r="14" fill="#c8946a"/>
+<ellipse cx="135" cy="72" rx="13" ry="7" fill="#1a0d05" opacity=".8"/>
+<circle cx="130" cy="83" r="1.8" fill="#1a0d05" opacity=".6"/>
+<circle cx="140" cy="83" r="1.8" fill="#1a0d05" opacity=".6"/>
+<text x="150" y="196" font-family="Inter,sans-serif" font-size="9" fill="#8888aa" text-anchor="middle" letter-spacing="1">PECTORALS · SHOULDERS · TRICEPS</text>
+</svg>`,
+
+latPulldown: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="lg1" cx="50%" cy="30%" r="50%"><stop offset="0%" stop-color="#3B82F6" stop-opacity=".5"/><stop offset="100%" stop-color="#3B82F6" stop-opacity="0"/></radialGradient></defs>
+<rect width="300" height="200" fill="#07070f"/>
+<!-- tall frame -->
+<rect x="140" y="10" width="7" height="160" rx="3" fill="#1a1a28"/>
+<rect x="60" y="10" width="180" height="7" rx="3" fill="#1a1a28"/>
+<!-- cable -->
+<line x1="143" y1="17" x2="143" y2="75" stroke="#3d3d58" stroke-width="2"/>
+<!-- pulldown bar -->
+<rect x="85" y="70" width="120" height="8" rx="4" fill="#252540" stroke="#333350" stroke-width="1"/>
+<circle cx="92" cy="74" r="7" fill="#1e1e30" stroke="#3d3d55" stroke-width="1.5"/>
+<circle cx="198" cy="74" r="7" fill="#1e1e30" stroke="#3d3d55" stroke-width="1.5"/>
+<!-- weight stack -->
+<rect x="220" y="20" width="32" height="110" rx="4" fill="#111120" stroke="#1e1e30" stroke-width="1"/>
+<rect x="223" y="23" width="26" height="6" rx="2" fill="#1a1a2e"/><rect x="223" y="31" width="26" height="6" rx="2" fill="#1a1a2e"/>
+<rect x="223" y="39" width="26" height="6" rx="2" fill="#3B82F6" opacity=".8"/>
+<rect x="223" y="47" width="26" height="6" rx="2" fill="#1a1a2e"/><rect x="223" y="55" width="26" height="6" rx="2" fill="#1a1a2e"/>
+<!-- seat -->
+<rect x="100" y="148" width="80" height="10" rx="4" fill="#1a3060"/>
+<rect x="118" y="155" width="18" height="10" rx="2" fill="#131325"/>
+<rect x="95" y="158" width="90" height="6" rx="2" fill="#111120"/>
+<!-- thigh pad -->
+<rect x="100" y="133" width="80" height="10" rx="5" fill="#1a3060" opacity=".7"/>
+<!-- back glow (lats) -->
+<rect x="105" y="95" width="70" height="50" rx="8" fill="url(#lg1)"/>
+<!-- person seated pulling bar down -->
+<!-- lower body -->
+<rect x="110" y="143" width="20" height="10" rx="3" fill="#1a2338"/><rect x="148" y="143" width="20" height="10" rx="3" fill="#1a2338"/>
+<rect x="112" y="152" width="15" height="20" rx="3" fill="#131a2a"/><rect x="151" y="152" width="15" height="20" rx="3" fill="#131a2a"/>
+<!-- torso (leaning back slightly) -->
+<path d="M110 97 Q105 100 106 108 L108 143 L172 143 L174 108 Q175 100 170 97 Z" fill="#1e40af"/>
+<!-- arms up holding bar -->
+<line x1="113" y1="97" x2="96" y2="73" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<line x1="167" y1="97" x2="184" y2="73" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<!-- neck + head -->
+<rect x="132" y="86" width="12" height="12" rx="3" fill="#c8946a"/>
+<circle cx="138" cy="73" r="13" fill="#c8946a"/>
+<ellipse cx="138" cy="63" rx="12" ry="6" fill="#1a0d05" opacity=".8"/>
+<circle cx="133" cy="73" r="1.8" fill="#1a0d05" opacity=".6"/>
+<circle cx="143" cy="73" r="1.8" fill="#1a0d05" opacity=".6"/>
+<text x="150" y="196" font-family="Inter,sans-serif" font-size="9" fill="#8888aa" text-anchor="middle" letter-spacing="1">LATS · MID-BACK · BICEPS</text>
+</svg>`,
+
+shoulderPress: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="sg1" cx="50%" cy="40%" r="45%"><stop offset="0%" stop-color="#f59e0b" stop-opacity=".5"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/></radialGradient></defs>
+<rect width="300" height="200" fill="#07070f"/>
+<!-- frame -->
+<rect x="70" y="25" width="7" height="148" rx="3" fill="#1a1a28"/>
+<rect x="195" y="25" width="7" height="148" rx="3" fill="#1a1a28"/>
+<rect x="68" y="25" width="140" height="7" rx="3" fill="#1a1a28"/>
+<!-- weight stack right -->
+<rect x="210" y="32" width="30" height="100" rx="4" fill="#111120" stroke="#1e1e30" stroke-width="1"/>
+<rect x="213" y="35" width="24" height="6" rx="2" fill="#1a1a2e"/><rect x="213" y="43" width="24" height="6" rx="2" fill="#3B82F6" opacity=".8"/>
+<rect x="213" y="51" width="24" height="6" rx="2" fill="#1a1a2e"/><rect x="213" y="59" width="24" height="6" rx="2" fill="#1a1a2e"/>
+<!-- press handles (above shoulder height) -->
+<line x1="78" y1="85" x2="100" y2="85" stroke="#2a2a40" stroke-width="8" stroke-linecap="round"/>
+<circle cx="99" cy="85" r="7" fill="#222235" stroke="#3d3d55" stroke-width="1.5"/>
+<line x1="192" y1="85" x2="170" y2="85" stroke="#2a2a40" stroke-width="8" stroke-linecap="round"/>
+<circle cx="171" cy="85" r="7" fill="#222235" stroke="#3d3d55" stroke-width="1.5"/>
+<!-- seat -->
+<rect x="104" y="150" width="72" height="10" rx="4" fill="#1a3060"/>
+<rect x="120" y="158" width="16" height="16" rx="2" fill="#131325"/>
+<rect x="98" y="172" width="84" height="6" rx="2" fill="#111120"/>
+<!-- backpad -->
+<rect x="131" y="105" width="10" height="48" rx="4" fill="#1a3060"/>
+<!-- shoulder glow -->
+<ellipse cx="117" cy="95" rx="16" ry="16" fill="url(#sg1)"/>
+<ellipse cx="163" cy="95" rx="16" ry="16" fill="url(#sg1)"/>
+<!-- person seated pressing up -->
+<rect x="110" y="145" width="18" height="10" rx="3" fill="#1a2338"/><rect x="150" y="145" width="18" height="10" rx="3" fill="#1a2338"/>
+<rect x="112" y="154" width="14" height="20" rx="3" fill="#131a2a"/><rect x="152" y="154" width="14" height="20" rx="3" fill="#131a2a"/>
+<!-- torso -->
+<path d="M110 103 Q106 106 106 114 L108 145 L172 145 L174 114 Q174 106 170 103 Z" fill="#1e40af"/>
+<!-- arms up pressing -->
+<line x1="113" y1="103" x2="104" y2="82" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<line x1="167" y1="103" x2="176" y2="82" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<!-- neck + head -->
+<rect x="132" y="90" width="12" height="14" rx="3" fill="#c8946a"/>
+<circle cx="138" cy="77" r="13" fill="#c8946a"/>
+<ellipse cx="138" cy="67" rx="12" ry="6" fill="#1a0d05" opacity=".8"/>
+<circle cx="133" cy="77" r="1.8" fill="#1a0d05" opacity=".6"/>
+<circle cx="143" cy="77" r="1.8" fill="#1a0d05" opacity=".6"/>
+<text x="150" y="196" font-family="Inter,sans-serif" font-size="9" fill="#8888aa" text-anchor="middle" letter-spacing="1">DELTOIDS · TRICEPS</text>
+</svg>`,
+
+hammerCurl: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="hcg" cx="50%" cy="45%" r="40%"><stop offset="0%" stop-color="#ef4444" stop-opacity=".5"/><stop offset="100%" stop-color="#ef4444" stop-opacity="0"/></radialGradient></defs>
+<rect width="300" height="200" fill="#07070f"/>
+<!-- floor line -->
+<rect x="40" y="178" width="220" height="3" rx="1" fill="#1a1a28"/>
+<!-- dumbbell (left hand, thumb up) -->
+<rect x="88" y="98" width="8" height="32" rx="3" fill="#252540"/>
+<rect x="82" y="95" width="20" height="9" rx="4" fill="#333350"/>
+<rect x="82" y="122" width="20" height="9" rx="4" fill="#333350"/>
+<!-- person standing, left arm curled -->
+<!-- right leg -->
+<rect x="148" y="140" width="20" height="42" rx="5" fill="#1a2338"/>
+<rect x="150" y="179" width="22" height="10" rx="3" fill="#111a28"/>
+<!-- left leg -->
+<rect x="118" y="140" width="20" height="42" rx="5" fill="#1a2338"/>
+<rect x="115" y="179" width="22" height="10" rx="3" fill="#111a28"/>
+<!-- torso -->
+<path d="M112 85 Q108 88 108 96 L110 140 L178 140 L180 96 Q180 88 176 85 Z" fill="#1e40af"/>
+<!-- brachialis/bicep glow -->
+<ellipse cx="100" cy="110" rx="18" ry="20" fill="url(#hcg)"/>
+<!-- right arm relaxed down -->
+<line x1="175" y1="87" x2="185" y2="130" stroke="#c8946a" stroke-width="11" stroke-linecap="round"/>
+<line x1="185" y1="130" x2="192" y2="155" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<!-- left arm curled (elbow bent ~90°) -->
+<line x1="113" y1="87" x2="103" y2="118" stroke="#c8946a" stroke-width="11" stroke-linecap="round"/>
+<line x1="103" y1="118" x2="93" y2="103" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<!-- dumbbell handle detail -->
+<line x1="96" y1="103" x2="96" y2="122" stroke="#c8946a" stroke-width="9" stroke-linecap="round"/>
+<!-- neck + head -->
+<rect x="132" y="73" width="12" height="14" rx="3" fill="#c8946a"/>
+<circle cx="138" cy="60" r="14" fill="#c8946a"/>
+<ellipse cx="138" cy="49" rx="13" ry="7" fill="#1a0d05" opacity=".8"/>
+<circle cx="133" cy="60" r="1.8" fill="#1a0d05" opacity=".6"/>
+<circle cx="143" cy="60" r="1.8" fill="#1a0d05" opacity=".6"/>
+<text x="150" y="196" font-family="Inter,sans-serif" font-size="9" fill="#8888aa" text-anchor="middle" letter-spacing="1">BRACHIALIS · BRACHIORADIALIS · BICEPS</text>
+</svg>`,
+
+preacherCurl: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="pcg" cx="50%" cy="55%" r="45%"><stop offset="0%" stop-color="#ef4444" stop-opacity=".5"/><stop offset="100%" stop-color="#ef4444" stop-opacity="0"/></radialGradient></defs>
+<rect width="300" height="200" fill="#07070f"/>
+<!-- preacher bench structure -->
+<rect x="80" y="105" width="140" height="70" rx="5" fill="#0f0f1e"/>
+<!-- angled arm pad (key feature) -->
+<polygon points="90,108 210,108 195,148 105,148" fill="#1a3060" stroke="#233060" stroke-width="1.5"/>
+<!-- seat (behind pad) -->
+<rect x="110" y="145" width="80" height="10" rx="4" fill="#1a3060"/>
+<rect x="128" y="155" width="16" height="20" rx="2" fill="#131325"/>
+<rect x="88" y="172" width="124" height="6" rx="2" fill="#111120"/>
+<!-- machine handle/bar at bottom of pad arc -->
+<rect x="108" y="148" width="84" height="8" rx="4" fill="#252540" stroke="#333350" stroke-width="1"/>
+<circle cx="114" cy="152" r="6" fill="#1e1e30" stroke="#3d3d55" stroke-width="1.5"/>
+<circle cx="186" cy="152" r="6" fill="#1e1e30" stroke="#3d3d55" stroke-width="1.5"/>
+<!-- weight stack (right) -->
+<rect x="220" y="108" width="30" height="90" rx="4" fill="#111120" stroke="#1e1e30" stroke-width="1"/>
+<rect x="223" y="111" width="24" height="6" rx="2" fill="#1a1a2e"/><rect x="223" y="119" width="24" height="6" rx="2" fill="#3B82F6" opacity=".8"/>
+<rect x="223" y="127" width="24" height="6" rx="2" fill="#1a1a2e"/><rect x="223" y="135" width="24" height="6" rx="2" fill="#1a1a2e"/>
+<!-- bicep glow on pad area -->
+<ellipse cx="150" cy="128" rx="40" ry="18" fill="url(#pcg)"/>
+<!-- person: seated leaning over preacher pad -->
+<!-- lower body (behind pad) -->
+<rect x="128" y="148" width="17" height="14" rx="3" fill="#1a2338"/><rect x="155" y="148" width="17" height="14" rx="3" fill="#1a2338"/>
+<!-- torso leaning forward -->
+<path d="M118 85 Q112 90 115 105 L118 140 L182 140 L185 105 Q188 90 182 85 Z" fill="#1e40af"/>
+<!-- arms resting on angled pad, elbows bent (curling) -->
+<line x1="120" y1="100" x2="110" y2="130" stroke="#c8946a" stroke-width="11" stroke-linecap="round"/>
+<line x1="110" y1="130" x2="120" y2="148" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<line x1="180" y1="100" x2="190" y2="130" stroke="#c8946a" stroke-width="11" stroke-linecap="round"/>
+<line x1="190" y1="130" x2="180" y2="148" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<!-- neck + head -->
+<rect x="132" y="73" width="12" height="14" rx="3" fill="#c8946a"/>
+<circle cx="138" cy="60" r="13" fill="#c8946a"/>
+<ellipse cx="138" cy="50" rx="12" ry="6" fill="#1a0d05" opacity=".8"/>
+<circle cx="133" cy="60" r="1.8" fill="#1a0d05" opacity=".6"/>
+<circle cx="143" cy="60" r="1.8" fill="#1a0d05" opacity=".6"/>
+<text x="150" y="196" font-family="Inter,sans-serif" font-size="9" fill="#8888aa" text-anchor="middle" letter-spacing="1">BICEPS PEAK · BRACHIALIS</text>
+</svg>`,
+
+tricepPushdown: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="tpg" cx="50%" cy="65%" r="35%"><stop offset="0%" stop-color="#a78bfa" stop-opacity=".55"/><stop offset="100%" stop-color="#a78bfa" stop-opacity="0"/></radialGradient></defs>
+<rect width="300" height="200" fill="#07070f"/>
+<!-- cable tower (tall) -->
+<rect x="185" y="10" width="10" height="180" rx="4" fill="#1a1a28" stroke="#252535" stroke-width="1"/>
+<!-- weight stack -->
+<rect x="198" y="18" width="32" height="120" rx="4" fill="#111120" stroke="#1e1e30" stroke-width="1"/>
+<rect x="201" y="21" width="26" height="7" rx="2" fill="#1a1a2e"/><rect x="201" y="30" width="26" height="7" rx="2" fill="#1a1a2e"/>
+<rect x="201" y="39" width="26" height="7" rx="2" fill="#3B82F6" opacity=".8"/>
+<rect x="201" y="48" width="26" height="7" rx="2" fill="#1a1a2e"/><rect x="201" y="57" width="26" height="7" rx="2" fill="#1a1a2e"/>
+<!-- cable from top -->
+<line x1="188" y1="18" x2="152" y2="85" stroke="#3d3d58" stroke-width="2"/>
+<!-- rope/bar attachment -->
+<rect x="138" y="82" width="28" height="7" rx="3" fill="#252540" stroke="#333350" stroke-width="1"/>
+<!-- tricep glow -->
+<ellipse cx="130" cy="130" rx="20" ry="28" fill="url(#tpg)"/>
+<ellipse cx="158" cy="130" rx="20" ry="28" fill="url(#tpg)"/>
+<!-- floor -->
+<rect x="40" y="180" width="200" height="3" rx="1" fill="#1a1a28"/>
+<!-- person standing at machine -->
+<!-- legs -->
+<rect x="126" y="148" width="20" height="35" rx="5" fill="#1a2338"/><rect x="150" y="148" width="20" height="35" rx="5" fill="#1a2338"/>
+<rect x="124" y="180" width="22" height="10" rx="3" fill="#111a28"/><rect x="150" y="180" width="22" height="10" rx="3" fill="#111a28"/>
+<!-- torso (upright, leaning very slightly fwd) -->
+<path d="M118 80 Q114 83 114 92 L116 148 L182 148 L184 92 Q184 83 180 80 Z" fill="#1e40af"/>
+<!-- arms down pushing bar (triceps isolated) -->
+<line x1="120" y1="85" x2="118" y2="118" stroke="#c8946a" stroke-width="11" stroke-linecap="round"/>
+<line x1="118" y1="118" x2="138" y2="132" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<line x1="178" y1="85" x2="180" y2="118" stroke="#c8946a" stroke-width="11" stroke-linecap="round"/>
+<line x1="180" y1="118" x2="160" y2="132" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<!-- handle at hands -->
+<rect x="136" y="130" width="28" height="7" rx="3" fill="#252540"/>
+<!-- neck + head -->
+<rect x="131" y="68" width="12" height="14" rx="3" fill="#c8946a"/>
+<circle cx="137" cy="55" r="13" fill="#c8946a"/>
+<ellipse cx="137" cy="45" rx="12" ry="6" fill="#1a0d05" opacity=".8"/>
+<circle cx="132" cy="55" r="1.8" fill="#1a0d05" opacity=".6"/>
+<circle cx="142" cy="55" r="1.8" fill="#1a0d05" opacity=".6"/>
+<text x="150" y="196" font-family="Inter,sans-serif" font-size="9" fill="#8888aa" text-anchor="middle" letter-spacing="1">TRICEPS (ALL 3 HEADS)</text>
+</svg>`,
+
+legPress: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="lpg" cx="60%" cy="40%" r="50%"><stop offset="0%" stop-color="#ef4444" stop-opacity=".45"/><stop offset="100%" stop-color="#ef4444" stop-opacity="0"/></radialGradient></defs>
+<rect width="300" height="200" fill="#07070f"/>
+<!-- machine frame (angled sled-style) -->
+<line x1="30" y1="175" x2="260" y2="50" stroke="#1a1a28" stroke-width="10" stroke-linecap="round"/>
+<line x1="30" y1="175" x2="30" y2="60" stroke="#1a1a28" stroke-width="8" stroke-linecap="round"/>
+<!-- seat (reclined) -->
+<rect x="25" y="95" width="80" height="35" rx="6" fill="#1a3060"/>
+<!-- backrest (reclined) -->
+<rect x="22" y="60" width="35" height="70" rx="5" fill="#1a3060" transform="rotate(-15,40,95)"/>
+<!-- weight plates on sled -->
+<rect x="200" y="45" width="60" height="100" rx="5" fill="#111120" stroke="#1e1e30" stroke-width="1"/>
+<rect x="204" y="49" width="52" height="12" rx="3" fill="#1e1e30"/><rect x="204" y="63" width="52" height="12" rx="3" fill="#1e1e30"/>
+<rect x="204" y="77" width="52" height="12" rx="3" fill="#3B82F6" opacity=".7"/><rect x="204" y="91" width="52" height="12" rx="3" fill="#1e1e30"/>
+<!-- footplate -->
+<rect x="195" y="42" width="15" height="110" rx="4" fill="#252540" stroke="#333350" stroke-width="1"/>
+<!-- person reclined, legs pushing plate -->
+<!-- torso reclined -->
+<rect x="30" y="97" width="75" height="32" rx="6" fill="#1e40af"/>
+<!-- legs extending up and forward -->
+<line x1="70" y1="97" x2="135" y2="68" stroke="#1a2338" stroke-width="22" stroke-linecap="round"/>
+<line x1="135" y1="68" x2="195" y2="75" stroke="#1a2338" stroke-width="18" stroke-linecap="round"/>
+<!-- second leg -->
+<line x1="82" y1="97" x2="147" y2="62" stroke="#1a2338" stroke-width="20" stroke-linecap="round"/>
+<!-- quad glow (thigh area) -->
+<ellipse cx="130" cy="73" rx="40" ry="18" fill="url(#lpg)"/>
+<!-- feet on plate -->
+<rect x="191" y="64" width="18" height="22" rx="4" fill="#131a28"/>
+<!-- head (at left, reclined) -->
+<circle cx="48" cy="85" r="13" fill="#c8946a"/>
+<ellipse cx="48" cy="75" rx="12" ry="6" fill="#1a0d05" opacity=".8"/>
+<circle cx="43" cy="85" r="1.8" fill="#1a0d05" opacity=".6"/>
+<circle cx="53" cy="85" r="1.8" fill="#1a0d05" opacity=".6"/>
+<text x="150" y="196" font-family="Inter,sans-serif" font-size="9" fill="#8888aa" text-anchor="middle" letter-spacing="1">QUADS · GLUTES · HAMSTRINGS</text>
+</svg>`,
+
+legExtension: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="leg" cx="60%" cy="55%" r="45%"><stop offset="0%" stop-color="#ef4444" stop-opacity=".5"/><stop offset="100%" stop-color="#ef4444" stop-opacity="0"/></radialGradient></defs>
+<rect width="300" height="200" fill="#07070f"/>
+<!-- machine frame -->
+<rect x="55" y="25" width="8" height="155" rx="3" fill="#1a1a28"/>
+<rect x="55" y="25" width="140" height="7" rx="3" fill="#1a1a28"/>
+<rect x="187" y="25" width="8" height="155" rx="3" fill="#1a1a28"/>
+<!-- seat -->
+<rect x="80" y="118" width="100" height="14" rx="5" fill="#1a3060"/>
+<!-- backrest -->
+<rect x="170" y="60" width="14" height="62" rx="5" fill="#1a3060"/>
+<!-- seat support -->
+<rect x="118" y="130" width="20" height="22" rx="3" fill="#131325"/>
+<rect x="68" y="150" width="124" height="7" rx="3" fill="#111120"/>
+<!-- weight stack -->
+<rect x="212" y="32" width="28" height="100" rx="4" fill="#111120" stroke="#1e1e30" stroke-width="1"/>
+<rect x="215" y="35" width="22" height="6" rx="2" fill="#1a1a2e"/><rect x="215" y="43" width="22" height="6" rx="2" fill="#3B82F6" opacity=".8"/>
+<rect x="215" y="51" width="22" height="6" rx="2" fill="#1a1a2e"/><rect x="215" y="59" width="22" height="6" rx="2" fill="#1a1a2e"/>
+<!-- pivot arm extending forward -->
+<line x1="63" y1="118" x2="63" y2="165" stroke="#252540" stroke-width="6" stroke-linecap="round"/>
+<line x1="63" y1="165" x2="80" y2="165" stroke="#252540" stroke-width="6" stroke-linecap="round"/>
+<!-- ankle pad -->
+<rect x="175" y="160" width="30" height="12" rx="5" fill="#1a3060"/>
+<!-- quad glow -->
+<ellipse cx="150" cy="125" rx="45" ry="14" fill="url(#leg)"/>
+<!-- person seated, legs extended -->
+<rect x="88" y="118" width="24" height="14" rx="4" fill="#1a2338"/>
+<rect x="145" y="118" width="24" height="14" rx="4" fill="#1a2338"/>
+<!-- legs extended FORWARD (horizontal) -->
+<rect x="88" y="133" width="96" height="16" rx="6" fill="#1a2338"/>
+<rect x="86" y="149" width="100" height="14" rx="5" fill="#131a28"/>
+<!-- feet -->
+<rect x="178" y="150" width="22" height="14" rx="4" fill="#1a2338"/>
+<!-- torso upright -->
+<path d="M96 66 Q92 70 92 80 L94 118 L166 118 L168 80 Q168 70 164 66 Z" fill="#1e40af"/>
+<!-- arms resting on sides -->
+<line x1="95" y1="72" x2="82" y2="108" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<line x1="165" y1="72" x2="178" y2="108" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<!-- neck + head -->
+<rect x="130" y="54" width="12" height="13" rx="3" fill="#c8946a"/>
+<circle cx="136" cy="42" r="13" fill="#c8946a"/>
+<ellipse cx="136" cy="32" rx="12" ry="6" fill="#1a0d05" opacity=".8"/>
+<circle cx="131" cy="42" r="1.8" fill="#1a0d05" opacity=".6"/>
+<circle cx="141" cy="42" r="1.8" fill="#1a0d05" opacity=".6"/>
+<text x="150" y="196" font-family="Inter,sans-serif" font-size="9" fill="#8888aa" text-anchor="middle" letter-spacing="1">QUADRICEPS (ISOLATION)</text>
+</svg>`,
+
+lyingLegCurl: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="llcg" cx="40%" cy="50%" r="45%"><stop offset="0%" stop-color="#ef4444" stop-opacity=".5"/><stop offset="100%" stop-color="#ef4444" stop-opacity="0"/></radialGradient></defs>
+<rect width="300" height="200" fill="#07070f"/>
+<!-- bench frame -->
+<rect x="40" y="110" width="220" height="12" rx="5" fill="#1a3060"/>
+<rect x="52" y="120" width="18" height="40" rx="3" fill="#131325"/>
+<rect x="230" y="120" width="18" height="40" rx="3" fill="#131325"/>
+<rect x="40" y="157" width="220" height="6" rx="2" fill="#111120"/>
+<!-- ankle roller mechanism -->
+<rect x="196" y="88" width="8" height="30" rx="3" fill="#252540"/>
+<rect x="188" y="118" width="24" height="10" rx="5" fill="#1a3060"/>
+<!-- weight stack -->
+<rect x="240" y="60" width="28" height="90" rx="4" fill="#111120" stroke="#1e1e30" stroke-width="1"/>
+<rect x="243" y="63" width="22" height="6" rx="2" fill="#1a1a2e"/><rect x="243" y="71" width="22" height="6" rx="2" fill="#3B82F6" opacity=".8"/>
+<rect x="243" y="79" width="22" height="6" rx="2" fill="#1a1a2e"/>
+<!-- hamstring glow -->
+<ellipse cx="155" cy="108" rx="70" ry="14" fill="url(#llcg)"/>
+<!-- person lying prone (face down) -->
+<!-- head (left side) -->
+<circle cx="52" cy="100" r="13" fill="#c8946a"/>
+<ellipse cx="52" cy="89" rx="12" ry="6" fill="#1a0d05" opacity=".8"/>
+<!-- torso (horizontal) -->
+<rect x="55" y="96" width="120" height="28" rx="7" fill="#1e40af"/>
+<!-- arms (forward at sides) -->
+<line x1="56" y1="100" x2="45" y2="118" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<line x1="56" y1="108" x2="42" y2="120" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<!-- hips/glutes -->
+<rect x="168" y="96" width="40" height="28" rx="6" fill="#152038"/>
+<!-- thighs (lying flat) -->
+<rect x="170" y="97" width="42" height="22" rx="6" fill="#1a2338"/>
+<!-- lower legs (CURLED UP at roughly 90°) -->
+<line x1="196" y1="108" x2="196" y2="80" stroke="#1a2338" stroke-width="20" stroke-linecap="round"/>
+<line x1="196" y1="80" x2="196" y2="62" stroke="#131a28" stroke-width="16" stroke-linecap="round"/>
+<!-- feet -->
+<ellipse cx="196" cy="60" rx="10" ry="7" fill="#1a2338"/>
+<text x="150" y="196" font-family="Inter,sans-serif" font-size="9" fill="#8888aa" text-anchor="middle" letter-spacing="1">HAMSTRINGS</text>
+</svg>`,
+
+seatedCalfRaise: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="scg" cx="50%" cy="80%" r="35%"><stop offset="0%" stop-color="#10b981" stop-opacity=".55"/><stop offset="100%" stop-color="#10b981" stop-opacity="0"/></radialGradient></defs>
+<rect width="300" height="200" fill="#07070f"/>
+<!-- machine frame -->
+<rect x="75" y="30" width="8" height="148" rx="3" fill="#1a1a28"/>
+<rect x="218" y="30" width="8" height="148" rx="3" fill="#1a1a28"/>
+<rect x="73" y="30" width="155" height="7" rx="3" fill="#1a1a28"/>
+<!-- seat -->
+<rect x="100" y="118" width="100" height="12" rx="4" fill="#1a3060"/>
+<!-- thigh pads (key feature!) -->
+<rect x="100" y="106" width="100" height="14" rx="5" fill="#1a3060" opacity=".85"/>
+<!-- footrest/raised platform for balls of feet -->
+<rect x="108" y="152" width="84" height="12" rx="4" fill="#252540" stroke="#333350" stroke-width="1"/>
+<rect x="104" y="162" width="92" height="6" rx="3" fill="#1a1a28"/>
+<!-- seat support -->
+<rect x="128" y="130" width="18" height="22" rx="2" fill="#131325"/>
+<rect x="83" y="165" width="134" height="7" rx="3" fill="#111120"/>
+<!-- calf glow -->
+<ellipse cx="150" cy="158" rx="55" ry="18" fill="url(#scg)"/>
+<!-- person seated, heels RAISED (calf raise position) -->
+<rect x="105" y="118" width="22" height="14" rx="4" fill="#1a2338"/>
+<rect x="173" y="118" width="22" height="14" rx="4" fill="#1a2338"/>
+<!-- lower legs vertical -->
+<rect x="108" y="130" width="17" height="30" rx="5" fill="#1a2338"/>
+<rect x="175" y="130" width="17" height="30" rx="5" fill="#1a2338"/>
+<!-- feet raised (heels up, balls on platform) - show raised position -->
+<rect x="104" y="158" width="22" height="8" rx="3" fill="#1a2338" transform="rotate(-20,115,162)"/>
+<rect x="174" y="158" width="22" height="8" rx="3" fill="#1a2338" transform="rotate(-20,185,162)"/>
+<!-- torso -->
+<path d="M108 70 Q104 74 104 83 L106 118 L194 118 L196 83 Q196 74 192 70 Z" fill="#1e40af"/>
+<!-- arms resting on thighs -->
+<line x1="110" y1="78" x2="118" y2="108" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<line x1="190" y1="78" x2="182" y2="108" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<!-- neck + head -->
+<rect x="133" y="58" width="12" height="13" rx="3" fill="#c8946a"/>
+<circle cx="139" cy="45" r="13" fill="#c8946a"/>
+<ellipse cx="139" cy="35" rx="12" ry="6" fill="#1a0d05" opacity=".8"/>
+<circle cx="134" cy="45" r="1.8" fill="#1a0d05" opacity=".6"/>
+<circle cx="144" cy="45" r="1.8" fill="#1a0d05" opacity=".6"/>
+<text x="150" y="196" font-family="Inter,sans-serif" font-size="9" fill="#8888aa" text-anchor="middle" letter-spacing="1">CALVES (GASTROCNEMIUS · SOLEUS)</text>
+</svg>`,
+
+hipAbductor: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="hag" cx="50%" cy="55%" r="50%"><stop offset="0%" stop-color="#f59e0b" stop-opacity=".5"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/></radialGradient></defs>
+<rect width="300" height="200" fill="#07070f"/>
+<!-- machine frame -->
+<rect x="85" y="30" width="8" height="148" rx="3" fill="#1a1a28"/>
+<rect x="207" y="30" width="8" height="148" rx="3" fill="#1a1a28"/>
+<rect x="83" y="30" width="134" height="7" rx="3" fill="#1a1a28"/>
+<!-- seat -->
+<rect x="108" y="130" width="84" height="12" rx="4" fill="#1a3060"/>
+<rect x="130" y="140" width="16" height="18" rx="2" fill="#131325"/>
+<rect x="88" y="156" width="124" height="6" rx="2" fill="#111120"/>
+<!-- backrest -->
+<rect x="131" y="80" width="14" height="54" rx="5" fill="#1a3060"/>
+<!-- outer thigh pads (KEY feature - pushed outward) -->
+<rect x="75" y="115" width="40" height="14" rx="5" fill="#1a3060" stroke="#233060" stroke-width="1"/>
+<rect x="185" y="115" width="40" height="14" rx="5" fill="#1a3060" stroke="#233060" stroke-width="1"/>
+<!-- hip/glute glow (outer) -->
+<ellipse cx="105" cy="128" rx="22" ry="18" fill="url(#hag)"/>
+<ellipse cx="195" cy="128" rx="22" ry="18" fill="url(#hag)"/>
+<!-- person seated, legs pushed OUT wide -->
+<rect x="108" y="128" width="24" height="14" rx="4" fill="#1a2338" transform="rotate(25,120,135)"/>
+<rect x="168" y="128" width="24" height="14" rx="4" fill="#1a2338" transform="rotate(-25,180,135)"/>
+<!-- lower legs vertical down -->
+<rect x="94" y="140" width="15" height="26" rx="4" fill="#131a28"/>
+<rect x="191" y="140" width="15" height="26" rx="4" fill="#131a28"/>
+<!-- torso -->
+<path d="M118 80 Q114 84 114 93 L116 130 L184 130 L186 93 Q186 84 182 80 Z" fill="#1e40af"/>
+<!-- arms on thigh pads/resting -->
+<line x1="118" y1="86" x2="96" y2="122" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<line x1="182" y1="86" x2="204" y2="122" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<!-- neck + head -->
+<rect x="131" y="68" width="12" height="14" rx="3" fill="#c8946a"/>
+<circle cx="137" cy="55" r="13" fill="#c8946a"/>
+<ellipse cx="137" cy="45" rx="12" ry="6" fill="#1a0d05" opacity=".8"/>
+<circle cx="132" cy="55" r="1.8" fill="#1a0d05" opacity=".6"/>
+<circle cx="142" cy="55" r="1.8" fill="#1a0d05" opacity=".6"/>
+<text x="150" y="196" font-family="Inter,sans-serif" font-size="9" fill="#8888aa" text-anchor="middle" letter-spacing="1">OUTER GLUTES · HIP ABDUCTORS</text>
+</svg>`,
+
+pecDeck: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="pdg" cx="50%" cy="50%" r="45%"><stop offset="0%" stop-color="#ef4444" stop-opacity=".45"/><stop offset="100%" stop-color="#ef4444" stop-opacity="0"/></radialGradient></defs>
+<rect width="300" height="200" fill="#07070f"/>
+<!-- machine outer frame -->
+<rect x="50" y="25" width="8" height="160" rx="3" fill="#1a1a28"/>
+<rect x="242" y="25" width="8" height="160" rx="3" fill="#1a1a28"/>
+<rect x="48" y="25" width="204" height="7" rx="3" fill="#1a1a28"/>
+<!-- pivot arms (come in from sides) -->
+<line x1="60" y1="90" x2="108" y2="90" stroke="#252540" stroke-width="9" stroke-linecap="round"/>
+<circle cx="62" cy="90" r="10" fill="#1a1a28" stroke="#333350" stroke-width="2"/>
+<line x1="240" y1="90" x2="192" y2="90" stroke="#252540" stroke-width="9" stroke-linecap="round"/>
+<circle cx="238" cy="90" r="10" fill="#1a1a28" stroke="#333350" stroke-width="2"/>
+<!-- arm pads (forearm rests) -->
+<rect x="105" y="83" width="12" height="30" rx="5" fill="#1a3060"/>
+<rect x="183" y="83" width="12" height="30" rx="5" fill="#1a3060"/>
+<!-- seat -->
+<rect x="110" y="140" width="80" height="12" rx="4" fill="#1a3060"/>
+<rect x="128" y="150" width="16" height="20" rx="2" fill="#131325"/>
+<rect x="98" y="168" width="104" height="6" rx="2" fill="#111120"/>
+<!-- weight stacks -->
+<rect x="10" y="35" width="28" height="110" rx="4" fill="#111120" stroke="#1e1e30" stroke-width="1"/>
+<rect x="13" y="38" width="22" height="7" rx="2" fill="#1a1a2e"/><rect x="13" y="47" width="22" height="7" rx="2" fill="#3B82F6" opacity=".8"/>
+<rect x="13" y="56" width="22" height="7" rx="2" fill="#1a1a2e"/>
+<rect x="262" y="35" width="28" height="110" rx="4" fill="#111120" stroke="#1e1e30" stroke-width="1"/>
+<rect x="265" y="38" width="22" height="7" rx="2" fill="#1a1a2e"/><rect x="265" y="47" width="22" height="7" rx="2" fill="#3B82F6" opacity=".8"/>
+<rect x="265" y="56" width="22" height="7" rx="2" fill="#1a1a2e"/>
+<!-- inner chest glow -->
+<ellipse cx="150" cy="100" rx="35" ry="28" fill="url(#pdg)"/>
+<!-- person seated, arms coming together -->
+<rect x="116" y="138" width="20" height="14" rx="4" fill="#1a2338"/><rect x="164" y="138" width="20" height="14" rx="4" fill="#1a2338"/>
+<rect x="118" y="152" width="16" height="20" rx="3" fill="#131a28"/><rect x="166" y="152" width="16" height="20" rx="3" fill="#131a28"/>
+<!-- torso -->
+<path d="M115 88 Q110 92 110 100 L112 138 L188 138 L190 100 Q190 92 185 88 Z" fill="#1e40af"/>
+<!-- arms pressing inward (forearms on pads) -->
+<line x1="118" y1="93" x2="110" y2="98" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<line x1="182" y1="93" x2="190" y2="98" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<!-- neck + head -->
+<rect x="133" y="76" width="12" height="13" rx="3" fill="#c8946a"/>
+<circle cx="139" cy="63" r="13" fill="#c8946a"/>
+<ellipse cx="139" cy="53" rx="12" ry="6" fill="#1a0d05" opacity=".8"/>
+<circle cx="134" cy="63" r="1.8" fill="#1a0d05" opacity=".6"/>
+<circle cx="144" cy="63" r="1.8" fill="#1a0d05" opacity=".6"/>
+<text x="150" y="196" font-family="Inter,sans-serif" font-size="9" fill="#8888aa" text-anchor="middle" letter-spacing="1">CHEST (INNER PECS · DEFINITION)</text>
+</svg>`,
+
+seatedCableRow: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="scrg" cx="60%" cy="45%" r="50%"><stop offset="0%" stop-color="#3B82F6" stop-opacity=".5"/><stop offset="100%" stop-color="#3B82F6" stop-opacity="0"/></radialGradient></defs>
+<rect width="300" height="200" fill="#07070f"/>
+<!-- cable tower (left side) -->
+<rect x="20" y="20" width="10" height="170" rx="4" fill="#1a1a28" stroke="#252535" stroke-width="1"/>
+<!-- weight stack on tower -->
+<rect x="8" y="28" width="30" height="110" rx="4" fill="#111120" stroke="#1e1e30" stroke-width="1"/>
+<rect x="11" y="31" width="24" height="7" rx="2" fill="#1a1a2e"/><rect x="11" y="40" width="24" height="7" rx="2" fill="#3B82F6" opacity=".8"/>
+<rect x="11" y="49" width="24" height="7" rx="2" fill="#1a1a2e"/><rect x="11" y="58" width="24" height="7" rx="2" fill="#1a1a2e"/>
+<!-- low pulley point -->
+<circle cx="25" cy="155" r="6" fill="#252540" stroke="#3d3d55" stroke-width="1.5"/>
+<!-- cable extending to handle -->
+<line x1="25" y1="155" x2="130" y2="140" stroke="#3d3d58" stroke-width="2"/>
+<!-- handle attachment -->
+<rect x="126" y="134" width="20" height="8" rx="4" fill="#252540" stroke="#333350" stroke-width="1"/>
+<!-- bench/seat platform -->
+<rect x="60" y="148" width="200" height="12" rx="4" fill="#1a1a28"/>
+<rect x="72" y="158" width="178" height="6" rx="2" fill="#111120"/>
+<!-- footrest bar -->
+<rect x="22" y="148" width="8" height="30" rx="3" fill="#252540"/>
+<rect x="18" y="175" width="50" height="7" rx="3" fill="#252540"/>
+<!-- back glow -->
+<ellipse cx="170" cy="105" rx="42" ry="35" fill="url(#scrg)"/>
+<!-- person seated, pulling cable to belly -->
+<rect x="130" y="148" width="20" height="12" rx="4" fill="#1a2338"/><rect x="160" y="148" width="20" height="12" rx="4" fill="#1a2338"/>
+<rect x="132" y="159" width="17" height="22" rx="4" fill="#131a28"/><rect x="161" y="159" width="17" height="22" rx="4" fill="#131a28"/>
+<!-- torso sitting upright (slight lean back at end of pull) -->
+<path d="M140 85 Q135 89 135 97 L137 148 L205 148 L207 97 Q207 89 202 85 Z" fill="#1e40af"/>
+<!-- arms pulling cable toward belly (bent at elbows) -->
+<line x1="142" y1="92" x2="128" y2="118" stroke="#c8946a" stroke-width="11" stroke-linecap="round"/>
+<line x1="128" y1="118" x2="130" y2="140" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<line x1="200" y1="92" x2="185" y2="118" stroke="#c8946a" stroke-width="11" stroke-linecap="round"/>
+<line x1="185" y1="118" x2="140" y2="138" stroke="#c8946a" stroke-width="9" stroke-linecap="round"/>
+<!-- neck + head -->
+<rect x="163" y="73" width="12" height="14" rx="3" fill="#c8946a"/>
+<circle cx="169" cy="60" r="13" fill="#c8946a"/>
+<ellipse cx="169" cy="50" rx="12" ry="6" fill="#1a0d05" opacity=".8"/>
+<circle cx="164" cy="60" r="1.8" fill="#1a0d05" opacity=".6"/>
+<circle cx="174" cy="60" r="1.8" fill="#1a0d05" opacity=".6"/>
+<text x="150" y="196" font-family="Inter,sans-serif" font-size="9" fill="#8888aa" text-anchor="middle" letter-spacing="1">MID-BACK · RHOMBOIDS · BICEPS</text>
+</svg>`,
+
+lateralRaise: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="lrg1" cx="25%" cy="45%" r="30%"><stop offset="0%" stop-color="#f59e0b" stop-opacity=".55"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/></radialGradient>
+<radialGradient id="lrg2" cx="75%" cy="45%" r="30%"><stop offset="0%" stop-color="#f59e0b" stop-opacity=".55"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/></radialGradient></defs>
+<rect width="300" height="200" fill="#07070f"/>
+<!-- machine frame -->
+<rect x="70" y="25" width="8" height="158" rx="3" fill="#1a1a28"/>
+<rect x="222" y="25" width="8" height="158" rx="3" fill="#1a1a28"/>
+<rect x="68" y="25" width="164" height="7" rx="3" fill="#1a1a28"/>
+<!-- arm pad mechanism (extends from sides) -->
+<line x1="80" y1="95" x2="112" y2="95" stroke="#252540" stroke-width="9" stroke-linecap="round"/>
+<circle cx="82" cy="95" r="10" fill="#1a1a28" stroke="#333350" stroke-width="1.5"/>
+<line x1="220" y1="95" x2="188" y2="95" stroke="#252540" stroke-width="9" stroke-linecap="round"/>
+<circle cx="218" cy="95" r="10" fill="#1a1a28" stroke="#333350" stroke-width="1.5"/>
+<!-- arm pads elevated (arms lifted) -->
+<rect x="108" y="77" width="12" height="28" rx="5" fill="#1a3060"/>
+<rect x="180" y="77" width="12" height="28" rx="5" fill="#1a3060"/>
+<!-- weight stacks -->
+<rect x="14" y="32" width="26" height="100" rx="4" fill="#111120" stroke="#1e1e30" stroke-width="1"/>
+<rect x="17" y="35" width="20" height="6" rx="2" fill="#1a1a2e"/><rect x="17" y="43" width="20" height="6" rx="2" fill="#3B82F6" opacity=".8"/>
+<rect x="17" y="51" width="20" height="6" rx="2" fill="#1a1a2e"/>
+<rect x="260" y="32" width="26" height="100" rx="4" fill="#111120" stroke="#1e1e30" stroke-width="1"/>
+<rect x="263" y="35" width="20" height="6" rx="2" fill="#1a1a2e"/><rect x="263" y="43" width="20" height="6" rx="2" fill="#3B82F6" opacity=".8"/>
+<rect x="263" y="51" width="20" height="6" rx="2" fill="#1a1a2e"/>
+<!-- side delt glow -->
+<ellipse cx="112" cy="90" rx="28" ry="22" fill="url(#lrg1)"/>
+<ellipse cx="188" cy="90" rx="28" ry="22" fill="url(#lrg2)"/>
+<!-- seat -->
+<rect x="110" y="140" width="80" height="12" rx="4" fill="#1a3060"/>
+<rect x="128" y="150" width="16" height="18" rx="2" fill="#131325"/>
+<rect x="94" y="166" width="112" height="6" rx="2" fill="#111120"/>
+<!-- person seated, arms raised to shoulder height -->
+<rect x="116" y="138" width="20" height="12" rx="4" fill="#1a2338"/><rect x="164" y="138" width="20" height="12" rx="4" fill="#1a2338"/>
+<rect x="118" y="150" width="16" height="20" rx="3" fill="#131a28"/><rect x="166" y="150" width="16" height="20" rx="3" fill="#131a28"/>
+<!-- torso -->
+<path d="M118 86 Q113 90 113 98 L115 138 L185 138 L187 98 Q187 90 182 86 Z" fill="#1e40af"/>
+<!-- arms RAISED to sides (at shoulder level) -->
+<line x1="116" y1="91" x2="108" y2="91" stroke="#c8946a" stroke-width="11" stroke-linecap="round"/>
+<line x1="184" y1="91" x2="192" y2="91" stroke="#c8946a" stroke-width="11" stroke-linecap="round"/>
+<!-- neck + head -->
+<rect x="131" y="74" width="12" height="13" rx="3" fill="#c8946a"/>
+<circle cx="137" cy="61" r="13" fill="#c8946a"/>
+<ellipse cx="137" cy="51" rx="12" ry="6" fill="#1a0d05" opacity=".8"/>
+<circle cx="132" cy="61" r="1.8" fill="#1a0d05" opacity=".6"/>
+<circle cx="142" cy="61" r="1.8" fill="#1a0d05" opacity=".6"/>
+<text x="150" y="196" font-family="Inter,sans-serif" font-size="9" fill="#8888aa" text-anchor="middle" letter-spacing="1">SIDE DELTOIDS (SHOULDER WIDTH)</text>
+</svg>`,
+
+overheadTricep: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="otg" cx="50%" cy="25%" r="40%"><stop offset="0%" stop-color="#a78bfa" stop-opacity=".55"/><stop offset="100%" stop-color="#a78bfa" stop-opacity="0"/></radialGradient></defs>
+<rect width="300" height="200" fill="#07070f"/>
+<!-- cable tower (right) -->
+<rect x="230" y="10" width="10" height="178" rx="4" fill="#1a1a28"/>
+<!-- weight stack -->
+<rect x="242" y="18" width="28" height="100" rx="4" fill="#111120" stroke="#1e1e30" stroke-width="1"/>
+<rect x="245" y="21" width="22" height="6" rx="2" fill="#1a1a2e"/><rect x="245" y="29" width="22" height="6" rx="2" fill="#3B82F6" opacity=".8"/>
+<rect x="245" y="37" width="22" height="6" rx="2" fill="#1a1a2e"/>
+<!-- cable from top pulley overhead -->
+<circle cx="235" cy="18" r="5" fill="#252540" stroke="#3d3d55" stroke-width="1.5"/>
+<line x1="235" y1="18" x2="175" y2="18" stroke="#3d3d58" stroke-width="2"/>
+<line x1="175" y1="18" x2="160" y2="45" stroke="#3d3d58" stroke-width="2"/>
+<!-- rope/bar overhead -->
+<rect x="145" y="40" width="30" height="8" rx="4" fill="#252540" stroke="#333350" stroke-width="1"/>
+<!-- tricep (long head) glow OVERHEAD -->
+<ellipse cx="160" cy="65" rx="20" ry="30" fill="url(#otg)"/>
+<!-- floor -->
+<rect x="40" y="182" width="200" height="3" rx="1" fill="#1a1a28"/>
+<!-- person standing, arms overhead (extended) -->
+<rect x="138" y="150" width="18" height="34" rx="5" fill="#1a2338"/><rect x="162" y="150" width="18" height="34" rx="5" fill="#1a2338"/>
+<rect x="136" y="180" width="21" height="10" rx="3" fill="#111a28"/><rect x="162" y="180" width="21" height="10" rx="3" fill="#111a28"/>
+<!-- torso -->
+<path d="M132 90 Q127 94 127 103 L129 150 L191 150 L193 103 Q193 94 188 90 Z" fill="#1e40af"/>
+<!-- arms UP overhead (tricep extension position - elbows up, forearms behind head then extending) -->
+<!-- upper arms vertical up -->
+<line x1="135" y1="92" x2="145" y2="55" stroke="#c8946a" stroke-width="11" stroke-linecap="round"/>
+<line x1="185" y1="92" x2="175" y2="55" stroke="#c8946a" stroke-width="11" stroke-linecap="round"/>
+<!-- forearms (extended overhead, holding rope) -->
+<line x1="145" y1="55" x2="155" y2="45" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<line x1="175" y1="55" x2="165" y2="45" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<!-- neck + head -->
+<rect x="151" y="78" width="12" height="14" rx="3" fill="#c8946a"/>
+<circle cx="157" cy="65" r="13" fill="#c8946a"/>
+<ellipse cx="157" cy="55" rx="12" ry="6" fill="#1a0d05" opacity=".8"/>
+<circle cx="152" cy="65" r="1.8" fill="#1a0d05" opacity=".6"/>
+<circle cx="162" cy="65" r="1.8" fill="#1a0d05" opacity=".6"/>
+<text x="150" y="196" font-family="Inter,sans-serif" font-size="9" fill="#8888aa" text-anchor="middle" letter-spacing="1">TRICEPS (LONG HEAD)</text>
+</svg>`,
+
+hackSquat: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="hsg" cx="50%" cy="55%" r="50%"><stop offset="0%" stop-color="#ef4444" stop-opacity=".5"/><stop offset="100%" stop-color="#ef4444" stop-opacity="0"/></radialGradient></defs>
+<rect width="300" height="200" fill="#07070f"/>
+<!-- angled sled frame (~45 degrees) -->
+<line x1="60" y1="170" x2="240" y2="30" stroke="#1a1a28" stroke-width="12" stroke-linecap="round"/>
+<line x1="60" y1="170" x2="90" y2="170" stroke="#1a1a28" stroke-width="8" stroke-linecap="round"/>
+<line x1="240" y1="30" x2="240" y2="170" stroke="#1a1a28" stroke-width="8" stroke-linecap="round"/>
+<!-- back pad (against which person leans) -->
+<rect x="90" y="60" width="14" height="100" rx="6" fill="#1a3060" transform="rotate(-45,97,110)"/>
+<!-- footplate at bottom of sled -->
+<rect x="70" y="155" width="80" height="16" rx="5" fill="#252540" stroke="#333350" stroke-width="1.5"/>
+<!-- shoulder pads -->
+<rect x="92" y="62" width="26" height="10" rx="4" fill="#1a3060" transform="rotate(-45,105,67)"/>
+<rect x="130" y="38" width="26" height="10" rx="4" fill="#1a3060" transform="rotate(-45,143,43)"/>
+<!-- weight plates on sled -->
+<rect x="200" y="28" width="50" height="90" rx="5" fill="#111120" stroke="#1e1e30" stroke-width="1"/>
+<rect x="203" y="32" width="44" height="10" rx="3" fill="#1e1e30"/><rect x="203" y="44" width="44" height="10" rx="3" fill="#3B82F6" opacity=".7"/>
+<rect x="203" y="56" width="44" height="10" rx="3" fill="#1e1e30"/>
+<!-- quad glow -->
+<ellipse cx="130" cy="118" rx="38" ry="30" fill="url(#hsg)"/>
+<!-- person on sled (angled back, squat position) -->
+<!-- lower legs (vertical, feet on plate) -->
+<rect x="88" y="130" width="18" height="40" rx="5" fill="#1a2338"/>
+<rect x="114" y="130" width="18" height="40" rx="5" fill="#1a2338"/>
+<!-- thighs (bent, parallel to ground roughly) -->
+<rect x="78" y="112" width="22" height="56" rx="6" fill="#1a2338" transform="rotate(-65,89,140)"/>
+<rect x="104" y="110" width="22" height="56" rx="6" fill="#1a2338" transform="rotate(-65,115,138)"/>
+<!-- torso (angled back against sled) -->
+<rect x="96" y="62" width="50" height="72" rx="8" fill="#1e40af" transform="rotate(-45,121,98)"/>
+<!-- head -->
+<circle cx="148" cy="52" r="13" fill="#c8946a"/>
+<ellipse cx="148" cy="42" rx="12" ry="6" fill="#1a0d05" opacity=".8"/>
+<circle cx="143" cy="52" r="1.8" fill="#1a0d05" opacity=".6"/>
+<circle cx="153" cy="52" r="1.8" fill="#1a0d05" opacity=".6"/>
+<text x="150" y="196" font-family="Inter,sans-serif" font-size="9" fill="#8888aa" text-anchor="middle" letter-spacing="1">QUADS · GLUTES (SWEEP &amp; SIZE)</text>
+</svg>`,
+
+seatedLegCurl: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="slcg" cx="60%" cy="65%" r="45%"><stop offset="0%" stop-color="#ef4444" stop-opacity=".5"/><stop offset="100%" stop-color="#ef4444" stop-opacity="0"/></radialGradient></defs>
+<rect width="300" height="200" fill="#07070f"/>
+<!-- machine frame -->
+<rect x="55" y="25" width="8" height="155" rx="3" fill="#1a1a28"/>
+<rect x="237" y="25" width="8" height="155" rx="3" fill="#1a1a28"/>
+<rect x="53" y="25" width="194" height="7" rx="3" fill="#1a1a28"/>
+<!-- seat -->
+<rect x="80" y="115" width="100" height="13" rx="5" fill="#1a3060"/>
+<!-- backrest -->
+<rect x="170" y="60" width="13" height="58" rx="5" fill="#1a3060"/>
+<!-- over-thigh pad (holds thighs down) -->
+<rect x="80" y="102" width="100" height="15" rx="5" fill="#1a3060" opacity=".8"/>
+<!-- ankle roller AT FRONT (curls leg DOWN) -->
+<rect x="188" y="142" width="30" height="12" rx="5" fill="#1a3060"/>
+<rect x="196" y="128" width="8" height="18" rx="3" fill="#252540"/>
+<!-- seat support -->
+<rect x="118" y="128" width="20" height="22" rx="3" fill="#131325"/>
+<rect x="65" y="148" width="130" height="7" rx="3" fill="#111120"/>
+<!-- weight stack -->
+<rect x="212" y="32" width="26" height="90" rx="4" fill="#111120" stroke="#1e1e30" stroke-width="1"/>
+<rect x="215" y="35" width="20" height="6" rx="2" fill="#1a1a2e"/><rect x="215" y="43" width="20" height="6" rx="2" fill="#3B82F6" opacity=".8"/>
+<rect x="215" y="51" width="20" height="6" rx="2" fill="#1a1a2e"/>
+<!-- hamstring glow (underneath thigh, curled) -->
+<ellipse cx="168" cy="130" rx="50" ry="16" fill="url(#slcg)"/>
+<!-- person seated, legs curling DOWNWARD -->
+<rect x="88" y="115" width="22" height="12" rx="4" fill="#1a2338"/><rect x="148" y="115" width="22" height="12" rx="4" fill="#1a2338"/>
+<!-- thighs on seat (horizontal) -->
+<rect x="86" y="102" width="118" height="25" rx="6" fill="#1a2338"/>
+<!-- lower legs bent DOWN (curled position) -->
+<rect x="158" y="128" width="18" height="32" rx="5" fill="#131a28" transform="rotate(30,167,144)"/>
+<rect x="186" y="128" width="18" height="32" rx="5" fill="#131a28" transform="rotate(-10,195,144)"/>
+<!-- feet -->
+<ellipse cx="205" cy="154" rx="12" ry="7" fill="#1a2338"/>
+<!-- torso -->
+<path d="M108 65 Q104 69 104 78 L106 115 L174 115 L176 78 Q176 69 172 65 Z" fill="#1e40af"/>
+<!-- arms resting on thighs -->
+<line x1="110" y1="73" x2="100" y2="108" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<line x1="170" y1="73" x2="178" y2="108" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<!-- neck + head -->
+<rect x="132" y="53" width="12" height="14" rx="3" fill="#c8946a"/>
+<circle cx="138" cy="40" r="13" fill="#c8946a"/>
+<ellipse cx="138" cy="30" rx="12" ry="6" fill="#1a0d05" opacity=".8"/>
+<circle cx="133" cy="40" r="1.8" fill="#1a0d05" opacity=".6"/>
+<circle cx="143" cy="40" r="1.8" fill="#1a0d05" opacity=".6"/>
+<text x="150" y="196" font-family="Inter,sans-serif" font-size="9" fill="#8888aa" text-anchor="middle" letter-spacing="1">HAMSTRINGS (FULL RANGE)</text>
+</svg>`,
+
+gluteKickback: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="gkg" cx="65%" cy="45%" r="40%"><stop offset="0%" stop-color="#f59e0b" stop-opacity=".55"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/></radialGradient></defs>
+<rect width="300" height="200" fill="#07070f"/>
+<!-- machine frame -->
+<rect x="165" y="15" width="8" height="168" rx="3" fill="#1a1a28"/>
+<rect x="55" y="15" width="118" height="7" rx="3" fill="#1a1a28"/>
+<rect x="55" y="15" width="8" height="168" rx="3" fill="#1a1a28"/>
+<!-- pad (where knee rests) -->
+<rect x="80" y="100" width="80" height="14" rx="5" fill="#1a3060"/>
+<!-- chest/forearm rest pads -->
+<rect x="72" y="70" width="88" height="12" rx="5" fill="#1a3060"/>
+<!-- ankle pad for kicking leg -->
+<rect x="190" y="88" width="28" height="12" rx="5" fill="#1a3060"/>
+<rect x="200" y="78" width="8" height="14" rx="3" fill="#252540"/>
+<!-- weight stack (right) -->
+<rect x="220" y="28" width="28" height="100" rx="4" fill="#111120" stroke="#1e1e30" stroke-width="1"/>
+<rect x="223" y="31" width="22" height="7" rx="2" fill="#1a1a2e"/><rect x="223" y="40" width="22" height="7" rx="2" fill="#3B82F6" opacity=".8"/>
+<rect x="223" y="49" width="22" height="7" rx="2" fill="#1a1a2e"/>
+<!-- floor -->
+<rect x="30" y="178" width="230" height="3" rx="1" fill="#1a1a28"/>
+<!-- glute glow -->
+<ellipse cx="165" cy="85" rx="30" ry="25" fill="url(#gkg)"/>
+<!-- person kneeling at machine, one leg kicking back -->
+<!-- supporting leg (bent, kneeling) -->
+<rect x="100" y="114" width="16" height="36" rx="5" fill="#1a2338"/>
+<rect x="98" y="148" width="20" height="14" rx="4" fill="#111a28"/>
+<!-- kicking leg (extended BACK and UP) -->
+<line x1="148" y1="105" x2="185" y2="82" stroke="#1a2338" stroke-width="20" stroke-linecap="round"/>
+<line x1="185" y1="82" x2="210" y2="92" stroke="#131a28" stroke-width="16" stroke-linecap="round"/>
+<!-- torso (horizontal, leaning forward onto pads) -->
+<rect x="80" y="68" width="70" height="46" rx="8" fill="#1e40af" transform="rotate(-5,115,91)"/>
+<!-- arms on forearm pads -->
+<line x1="82" y1="73" x2="70" y2="90" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<line x1="145" y1="73" x2="158" y2="87" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<!-- head (looking forward/down) -->
+<circle cx="80" cy="58" r="13" fill="#c8946a"/>
+<ellipse cx="80" cy="47" rx="12" ry="6" fill="#1a0d05" opacity=".8"/>
+<circle cx="75" cy="58" r="1.8" fill="#1a0d05" opacity=".6"/>
+<circle cx="85" cy="58" r="1.8" fill="#1a0d05" opacity=".6"/>
+<text x="150" y="196" font-family="Inter,sans-serif" font-size="9" fill="#8888aa" text-anchor="middle" letter-spacing="1">GLUTES (MAX CONTRACTION)</text>
+</svg>`,
+
+standingCalfRaise: `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="stcg" cx="50%" cy="75%" r="35%"><stop offset="0%" stop-color="#10b981" stop-opacity=".6"/><stop offset="100%" stop-color="#10b981" stop-opacity="0"/></radialGradient></defs>
+<rect width="300" height="200" fill="#07070f"/>
+<!-- machine frame -->
+<rect x="75" y="20" width="8" height="170" rx="3" fill="#1a1a28"/>
+<rect x="217" y="20" width="8" height="170" rx="3" fill="#1a1a28"/>
+<rect x="73" y="20" width="154" height="7" rx="3" fill="#1a1a28"/>
+<!-- shoulder pads -->
+<rect x="108" y="62" width="36" height="12" rx="5" fill="#1a3060"/>
+<rect x="156" y="62" width="36" height="12" rx="5" fill="#1a3060"/>
+<!-- step platform (balls of feet here) -->
+<rect x="90" y="162" width="120" height="14" rx="5" fill="#252540" stroke="#333350" stroke-width="1.5"/>
+<rect x="84" y="174" width="132" height="7" rx="3" fill="#111120"/>
+<!-- calf glow -->
+<ellipse cx="150" cy="162" rx="48" ry="20" fill="url(#stcg)"/>
+<!-- person standing, RISEN ON TOES (calf raise position) -->
+<!-- feet (up on balls) -->
+<rect x="116" y="158" width="22" height="12" rx="4" fill="#1a2338" transform="rotate(-25,127,164)"/>
+<rect x="162" y="158" width="22" height="12" rx="4" fill="#1a2338" transform="rotate(25,173,164)"/>
+<!-- lower legs (calves contracted) -->
+<rect x="120" y="126" width="18" height="40" rx="5" fill="#1a2338"/>
+<rect x="162" y="126" width="18" height="40" rx="5" fill="#1a2338"/>
+<!-- thighs -->
+<rect x="122" y="88" width="18" height="42" rx="5" fill="#1a2338"/>
+<rect x="160" y="88" width="18" height="42" rx="5" fill="#1a2338"/>
+<!-- torso -->
+<path d="M120 55 Q115 59 115 68 L117 88 L183 88 L185 68 Q185 59 180 55 Z" fill="#1e40af"/>
+<!-- arms at sides -->
+<line x1="118" y1="61" x2="108" y2="90" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<line x1="182" y1="61" x2="192" y2="90" stroke="#c8946a" stroke-width="10" stroke-linecap="round"/>
+<!-- neck + head -->
+<rect x="133" y="43" width="12" height="14" rx="3" fill="#c8946a"/>
+<circle cx="139" cy="30" r="13" fill="#c8946a"/>
+<ellipse cx="139" cy="20" rx="12" ry="6" fill="#1a0d05" opacity=".8"/>
+<circle cx="134" cy="30" r="1.8" fill="#1a0d05" opacity=".6"/>
+<circle cx="144" cy="30" r="1.8" fill="#1a0d05" opacity=".6"/>
+<text x="150" y="196" font-family="Inter,sans-serif" font-size="9" fill="#8888aa" text-anchor="middle" letter-spacing="1">CALVES (VOLUME &amp; DEFINITION)</text>
+</svg>`
+
+}; // end SVGS (kept for fallback)
+
+/* ─────────────────────────────────────────────
+   HIGGSFIELD EXERCISE IMAGES
+───────────────────────────────────────────── */
+const IMGS = {
+  chestPress:       "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_030707_e61387bd-2cb0-40dc-b0a8-9311597c9eb4.png",
+  latPulldown:      "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_030712_5a116ea3-7ec8-4269-8dcb-6b26598e17e9.png",
+  shoulderPress:    "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_030720_98fcdc07-5fa7-4210-9913-3c982e14b91b.png",
+  hammerCurl:       "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_030725_d8ec2d9e-89b1-461e-988c-963516f2a2ca.png",
+  preacherCurl:     "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_030729_6b52b7b5-0900-4d2b-b6bf-729d1ddf96ac.png",
+  tricepPushdown:   "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_030733_71a68c71-d2f0-47b5-a84a-111031eaa5e3.png",
+  legPress:         "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_030739_d32a7263-b149-4634-a114-0979f439ee9b.png",
+  legExtension:     "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_030745_e2c84a7f-d5bf-4f65-b0b1-972d41b799cb.png",
+  lyingLegCurl:     "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_030750_16ac4ee8-7466-4943-be74-5f20d351e3c0.png",
+  seatedCalfRaise:  "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_030804_773d79de-ed88-4bee-8b78-14c48e328712.png",
+  hipAbductor:      "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_030809_e5244844-1ea6-4898-9581-5e08a66100b3.png",
+  pecDeck:          "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_030814_d92db22b-f41d-4cc5-a006-65d5205c79b9.png",
+  seatedCableRow:   "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_030818_fa5ed3d2-5cdc-4f3b-90a3-5ded41ad059f.png",
+  lateralRaise:     "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_030822_ca6eda5e-387f-40e2-a2b6-a0317935ad06.png",
+  overheadTricep:   "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_030827_46850241-3a7c-4b87-8b96-96bddebddb55.png",
+  hackSquat:        "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_030831_5cad5b74-659e-48de-b4ba-0f01bc953d14.png",
+  seatedLegCurl:    "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_030840_cd3611a4-af8d-452f-b961-eedeb28677e9.png",
+  gluteKickback:    "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_031105_b6552027-8de1-41c3-ae69-136dbe589435.png",
+  standingCalfRaise:"https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_030857_24a8febc-4922-46f1-87f6-7a6dbb2b8cd5.png",
+  backExtension:    "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_032107_11cdd21e-4b6e-4a44-84ca-f4ca86c4075d.jpeg",
+  rearDeltFly:      "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_032113_d14f23e4-3701-4670-b6f4-c7ccc076aa3b.jpeg",
+  abCrunch:         "https://d8j0ntlcm91z4.cloudfront.net/user_3D0ucdmP2KL2H9O9w7raXgBsuOC/hf_20260619_032119_f7668c69-1e4d-4a35-89f4-675637cd90b7.jpeg"
+};
+
+/* ─────────────────────────────────────────────
+   WORKOUT DATA
+───────────────────────────────────────────── */
+const WORKOUTS = {
+  monday: {
+    title: "Monday",
+    label: "Upper Body",
+    focus: "Strength Focus",
+    duration: "~45 min",
+    shortType: "Upper",
+    exercises: [
+      { id:"m1", name:"Chest Press Machine", equipment:"machine", sets:3, reps:"8–10", rest:"90 sec", weight:"8–10 lbs",
+        muscles:"Chest (pectorals), front shoulder, triceps",
+        tip:"Keep your back flat against the pad. Exhale as you push. Control the weight on the way back — don't let it slam.",
+        svg:"chestPress" },
+      { id:"m2", name:"Lat Pulldown Machine", equipment:"machine", sets:3, reps:"8–10", rest:"90 sec", weight:"8–10 lbs",
+        muscles:"Back (lats), biceps",
+        tip:"Pull the bar to your upper chest, not behind your neck. Lean back slightly and squeeze your lats at the bottom.",
+        svg:"latPulldown" },
+      { id:"m3", name:"Shoulder Press Machine", equipment:"machine", sets:3, reps:"8–10", rest:"90 sec", weight:"8–10 lbs",
+        muscles:"Shoulders (deltoids), triceps",
+        tip:"Don't lock your elbows at the top. Keep the movement smooth and controlled.",
+        svg:"shoulderPress" },
+      { id:"m4", name:"Hammer Curl (Dumbbell)", equipment:"dumbbell", sets:3, reps:"8–10", rest:"60 sec", weight:"8–10 lbs",
+        muscles:"Brachialis, brachioradialis, biceps",
+        tip:"Hold the dumbbell like a hammer — thumb facing up. Curl alternating arms. This builds the brachialis which makes arms look thicker.",
+        svg:"hammerCurl" },
+      { id:"m5", name:"Preacher Curl Machine", equipment:"machine", sets:3, reps:"8–10", rest:"60 sec", weight:"8–10 lbs",
+        muscles:"Biceps peak, brachialis",
+        tip:"Rest your arms fully on the pad. Curl slowly and squeeze at the top. Lower it controlled — this is where the growth happens.",
+        svg:"preacherCurl" },
+      { id:"m6", name:"Tricep Pushdown (Cable)", equipment:"machine", sets:3, reps:"8–10", rest:"60 sec", weight:"8–10 lbs",
+        muscles:"Triceps",
+        tip:"Keep your elbows locked to your sides. Fully extend at the bottom and squeeze.",
+        svg:"tricepPushdown" }
+    ]
+  },
+  tuesday: {
+    title: "Tuesday",
+    label: "Lower Body",
+    focus: "Strength Focus",
+    duration: "~45 min",
+    shortType: "Lower",
+    exercises: [
+      { id:"t1", name:"Leg Press Machine", equipment:"machine", sets:3, reps:"8–10", rest:"90 sec", weight:"10 lbs",
+        muscles:"Quads, glutes, hamstrings",
+        tip:"Place feet shoulder-width, mid-plate. Don't lock your knees at the top. Go as deep as feels comfortable without your lower back lifting off the pad.",
+        svg:"legPress" },
+      { id:"t2", name:"Leg Extension Machine", equipment:"machine", sets:3, reps:"8–10", rest:"60 sec", weight:"8–10 lbs",
+        muscles:"Quads (isolation)",
+        tip:"Pause and squeeze at the top for 1 second. This isolates the quad and burns — that's good.",
+        svg:"legExtension" },
+      { id:"t3", name:"Lying Leg Curl Machine", equipment:"machine", sets:3, reps:"8–10", rest:"60 sec", weight:"8–10 lbs",
+        muscles:"Hamstrings",
+        tip:"Don't swing your hips up. Keep your pelvis pressed into the pad throughout the movement.",
+        svg:"lyingLegCurl" },
+      { id:"t4", name:"Seated Calf Raise Machine", equipment:"machine", sets:3, reps:"15", rest:"45 sec", weight:"8–10 lbs",
+        muscles:"Calves (gastrocnemius, soleus)",
+        tip:"Go through the full range — all the way down to feel the stretch, all the way up on your toes. Calves respond best to slow, full-range reps.",
+        svg:"seatedCalfRaise" },
+      { id:"t5", name:"Hip Abductor Machine", equipment:"machine", sets:3, reps:"12–15", rest:"45 sec", weight:"8–10 lbs",
+        muscles:"Outer glutes, hip abductors",
+        tip:"Sit tall and push out to the sides slowly. Great for outer glutes and hip stability — don't rush this one.",
+        svg:"hipAbductor" },
+      { id:"t6", name:"Back Extension Machine", equipment:"machine", sets:3, reps:"10–12", rest:"60 sec", weight:"Bodyweight only",
+        muscles:"Lower back (erector spinae), glutes, hamstrings",
+        tip:"Cross your arms over your chest. Lower slowly until you feel a stretch, then raise until your body is in a straight line — don't arch past that. Controlled and slow, this isn't a heavy-weight movement.",
+        svg:"backExtension" }
+    ]
+  },
+  wednesday: null,
+  thursday: {
+    title: "Thursday",
+    label: "Upper Body",
+    focus: "Hypertrophy / Volume Focus",
+    duration: "~50 min",
+    shortType: "Upper+",
+    exercises: [
+      { id:"th1", name:"Cable Fly / Pec Deck Machine", equipment:"machine", sets:4, reps:"12–15", rest:"60 sec", weight:"8–10 lbs",
+        muscles:"Chest (inner pecs, definition)",
+        tip:"Focus on the squeeze at the center — imagine hugging a big tree. This is all about feeling the chest stretch and contract.",
+        svg:"pecDeck" },
+      { id:"th2", name:"Seated Cable Row", equipment:"machine", sets:4, reps:"12–15", rest:"60 sec", weight:"8–10 lbs",
+        muscles:"Mid-back, rhomboids, biceps",
+        tip:"Pull to your belly button. Sit tall, don't round your back. Squeeze your shoulder blades together at the end.",
+        svg:"seatedCableRow" },
+      { id:"th3", name:"Lateral Raise Machine", equipment:"machine", sets:4, reps:"12–15", rest:"45 sec", weight:"8 lbs",
+        muscles:"Side delts (shoulder width)",
+        tip:"Lift only to shoulder height — no higher. This builds that wide shoulder look. Slow and controlled wins here.",
+        svg:"lateralRaise" },
+      { id:"th3b", name:"Rear Delt Fly Machine", equipment:"machine", sets:3, reps:"12–15", rest:"45 sec", weight:"8 lbs",
+        muscles:"Rear delts, upper back",
+        tip:"Squeeze your shoulder blades together at the back of the movement. This balances out your front shoulder work and gives shoulders that rounded 3D look from the back.",
+        svg:"rearDeltFly" },
+      { id:"th3c", name:"Ab Crunch Machine", equipment:"machine", sets:3, reps:"15", rest:"45 sec", weight:"8–10 lbs",
+        muscles:"Abs (rectus abdominis)",
+        tip:"Curl your ribs toward your hips, don't just lean forward. Slow and controlled — this builds visible ab definition, not just core strength.",
+        svg:"abCrunch" },
+      { id:"th4", name:"Hammer Curl (Dumbbell)", equipment:"dumbbell", sets:3, reps:"12–15", rest:"45 sec", weight:"8–10 lbs",
+        muscles:"Brachialis, brachioradialis, biceps",
+        tip:"These two go back to back for a full bicep pump — hammer curls hit the thickness, preacher curls hit the peak. Go lighter today and really feel every rep.",
+        svg:"hammerCurl" },
+      { id:"th5", name:"Preacher Curl Machine", equipment:"machine", sets:3, reps:"12–15", rest:"45 sec", weight:"8 lbs",
+        muscles:"Biceps peak",
+        tip:"Right after hammer curls — arms are already warm. Lighter than Monday, 3-second slow lower on every rep. This is where the peak is built.",
+        svg:"preacherCurl" },
+      { id:"th6", name:"Overhead Tricep Extension Machine", equipment:"machine", sets:3, reps:"12–15", rest:"45 sec", weight:"8–10 lbs",
+        muscles:"Triceps (long head)",
+        tip:"Elbows stay pointed forward. Extend fully overhead. This hits the long head of the tricep — the biggest part.",
+        svg:"overheadTricep" }
+    ]
+  },
+  friday: {
+    title: "Friday",
+    label: "Lower Body",
+    focus: "Hypertrophy / Volume Focus",
+    duration: "~45 min",
+    shortType: "Lower+",
+    exercises: [
+      { id:"f1", name:"Hack Squat Machine", equipment:"machine", sets:4, reps:"12–15", rest:"60 sec", weight:"10 lbs",
+        muscles:"Quads, glutes",
+        tip:"Feet shoulder-width, slightly turned out. Keep your back fully against the pad and sink deep. Great for quad sweep and overall leg size.",
+        svg:"hackSquat" },
+      { id:"f2", name:"Leg Extension Machine", equipment:"machine", sets:4, reps:"15", rest:"45 sec", weight:"8–10 lbs",
+        muscles:"Quads",
+        tip:"Hypertrophy set — lighter weight, squeeze hard at the top for 2 seconds every rep.",
+        svg:"legExtension" },
+      { id:"f3", name:"Seated Leg Curl Machine", equipment:"machine", sets:4, reps:"12–15", rest:"45 sec", weight:"8–10 lbs",
+        muscles:"Hamstrings",
+        tip:"Full stretch at the top, full contraction at the bottom. Hamstrings love full range.",
+        svg:"seatedLegCurl" },
+      { id:"f4", name:"Glute Kickback Machine", equipment:"machine", sets:3, reps:"15 each leg", rest:"45 sec", weight:"8–10 lbs",
+        muscles:"Glutes",
+        tip:"Squeeze your glute at the top of each rep and hold for a second. Don't rush.",
+        svg:"gluteKickback" },
+      { id:"f5", name:"Standing Calf Raise Machine", equipment:"machine", sets:4, reps:"20", rest:"30 sec", weight:"8–10 lbs",
+        muscles:"Calves",
+        tip:"Slow down. 2 seconds up, 2 seconds down. Calves are stubborn — full range and volume beats heavy weight.",
+        svg:"standingCalfRaise" }
+    ]
+  },
+  saturday: null,
+  sunday: null
+};
+
+const DAY_ORDER = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
+const DAY_SHORT = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+
+/* ─────────────────────────────────────────────
+   STATE
+───────────────────────────────────────────── */
+let selectedDay = null;
+let progress = {}; // { dayKey: Set<exerciseId> }
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem("liftbud_progress");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      for (const k in parsed) progress[k] = new Set(parsed[k]);
+    }
+  } catch(e) {}
+}
+
+function saveProgress() {
+  try {
+    const out = {};
+    for (const k in progress) out[k] = [...progress[k]];
+    localStorage.setItem("liftbud_progress", JSON.stringify(out));
+  } catch(e) {}
+}
+
+function getProgress(dayKey) {
+  return progress[dayKey] || (progress[dayKey] = new Set());
+}
+
+/* ─────────────────────────────────────────────
+   HELPERS
+───────────────────────────────────────────── */
+function getTodayKey() {
+  const d = new Date().getDay(); // 0=Sun,1=Mon,...
+  const map = [6,0,1,2,3,4,5];  // map to DAY_ORDER index
+  return DAY_ORDER[map[d]];
+}
+
+/* ─────────────────────────────────────────────
+   RENDER WEEK GRID
+───────────────────────────────────────────── */
+function renderWeek() {
+  const todayKey = getTodayKey();
+  const grid = document.getElementById("weekGrid");
+  grid.innerHTML = "";
+  DAY_ORDER.forEach((day, i) => {
+    const w = WORKOUTS[day];
+    const isRest = !w;
+    const isToday = day === todayKey;
+    const isActive = day === selectedDay;
+    const div = document.createElement("div");
+    div.className = ["day-card", isRest?"rest":"", isToday?"today":"", isActive?"active":""].filter(Boolean).join(" ");
+    div.innerHTML = `<div class="dname">${DAY_SHORT[i]}</div>
+      <div class="dtype">${isRest ? "Rest" : w.shortType}</div>
+      <div class="ddot"></div>`;
+    if (!isRest) div.onclick = () => selectDay(day);
+    grid.appendChild(div);
+  });
+}
+
+/* ─────────────────────────────────────────────
+   SELECT DAY
+───────────────────────────────────────────── */
+function selectDay(day) {
+  selectedDay = day;
+  renderWeek();
+  renderDayDetail();
+}
+
+/* ─────────────────────────────────────────────
+   RENDER DAY DETAIL
+───────────────────────────────────────────── */
+function renderDayDetail() {
+  const container = document.getElementById("dayDetail");
+  if (!selectedDay) { container.innerHTML = ""; return; }
+  const w = WORKOUTS[selectedDay];
+  if (!w) { renderRestDetail(container); return; }
+
+  const done = getProgress(selectedDay);
+  const total = w.exercises.length;
+  const doneCount = done.size;
+  const pct = total > 0 ? Math.round((doneCount/total)*100) : 0;
+
+  container.innerHTML = `
+    <div class="detail-header">
+      <div>
+        <div class="detail-title">${w.title} — ${w.label}</div>
+        <div class="detail-focus">${w.focus}</div>
+      </div>
+      <div class="time-badge">⏱ ${w.duration}</div>
+    </div>
+    <div class="progress-card">
+      <div class="prog-row">
+        <span class="prog-label">Session Progress</span>
+        <span class="prog-count" id="progCount">${doneCount}/${total} exercises</span>
+      </div>
+      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:${pct}%"></div></div>
+      <div class="completion-msg" id="completionMsg">Great work, Lio! 💪 Rest up and come back stronger.</div>
+    </div>
+    <div class="exercises-list" id="exercisesList">
+      ${w.exercises.map(ex => renderExercise(ex, done.has(ex.id))).join("")}
+    </div>
+  `;
+
+  if (doneCount === total && total > 0) {
+    document.getElementById("completionMsg").style.display = "block";
+  }
+
+  // attach checkbox events
+  container.querySelectorAll(".done-row").forEach(row => {
+    row.addEventListener("click", () => {
+      const exId = row.dataset.exid;
+      const dayKey = row.dataset.day;
+      toggleExercise(dayKey, exId);
+    });
+  });
+
+  // scroll into view
+  container.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/* ─────────────────────────────────────────────
+   RENDER EXERCISE CARD
+───────────────────────────────────────────── */
+function renderExercise(ex, isDone) {
+  const eqClass = ex.equipment === "machine" ? "machine" : "dumbbell";
+  const eqLabel = ex.equipment === "machine" ? "⚙ Machine" : "🏋 Dumbbell";
+  const imgUrl = IMGS[ex.svg] || "";
+
+  return `
+  <div class="ex-card${isDone?" done":""}" id="excard-${ex.id}">
+    <div class="ex-body">
+      <div class="ex-top">
+        <div class="ex-name-wrap">
+          <div class="ex-name">${ex.name}</div>
+          <div class="ex-muscles">${ex.muscles}</div>
+        </div>
+        <div class="eq-badge ${eqClass}">${eqLabel}</div>
+      </div>
+      <div class="ex-illustration"><img src="${imgUrl}" alt="${ex.name}" loading="lazy"></div>
+      <div class="stats-grid">
+        <div class="stat-pill"><div class="stat-lbl">Sets</div><div class="stat-val">${ex.sets}</div></div>
+        <div class="stat-pill"><div class="stat-lbl">Reps</div><div class="stat-val">${ex.reps}</div></div>
+        <div class="stat-pill"><div class="stat-lbl">Rest</div><div class="stat-val">${ex.rest}</div></div>
+      </div>
+      <div class="weight-row"><span>Suggested weight:</span><span>${ex.weight}</span></div>
+      <div class="tip-box">
+        <div class="tip-lbl">💡 COACH TIP</div>
+        <div class="tip-text">${ex.tip}</div>
+      </div>
+      <div class="done-row" data-exid="${ex.id}" data-day="${selectedDay}">
+        <div class="chk${isDone?" checked":""}" id="chk-${ex.id}"></div>
+        <span class="done-lbl">${isDone ? "Done — great set!" : "Mark as done"}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ─────────────────────────────────────────────
+   TOGGLE EXERCISE DONE
+───────────────────────────────────────────── */
+function toggleExercise(dayKey, exId) {
+  const done = getProgress(dayKey);
+  if (done.has(exId)) done.delete(exId); else done.add(exId);
+  saveProgress();
+
+  const w = WORKOUTS[dayKey];
+  const total = w.exercises.length;
+  const doneCount = done.size;
+  const pct = total > 0 ? Math.round((doneCount/total)*100) : 0;
+
+  // update progress bar + count
+  const fill = document.getElementById("progFill");
+  const count = document.getElementById("progCount");
+  const msg = document.getElementById("completionMsg");
+  if (fill) fill.style.width = pct + "%";
+  if (count) count.textContent = `${doneCount}/${total} exercises`;
+  if (msg) msg.style.display = (doneCount === total && total > 0) ? "block" : "none";
+
+  // update card
+  const card = document.getElementById(`excard-${exId}`);
+  const chk = document.getElementById(`chk-${exId}`);
+  const lbl = card?.querySelector(".done-lbl");
+  const isDone = done.has(exId);
+  if (card) card.classList.toggle("done", isDone);
+  if (chk) chk.classList.toggle("checked", isDone);
+  if (lbl) lbl.textContent = isDone ? "Done — great set!" : "Mark as done";
+}
+
+/* ─────────────────────────────────────────────
+   REST DAY
+───────────────────────────────────────────── */
+function renderRestDetail(container) {
+  container.innerHTML = `
+    <div class="rest-view">
+      <div class="rest-emoji">😴</div>
+      <div class="rest-title">Rest & Recovery</div>
+      <div class="rest-body">Your muscles grow while you rest, not while you train. Sleep well, eat enough protein, and get ready to crush the next session.</div>
+    </div>`;
+}
+
+/* ─────────────────────────────────────────────
+   INIT
+───────────────────────────────────────────── */
+function init() {
+  loadProgress();
+  const todayKey = getTodayKey();
+  // auto-select today if it's a workout day
+  if (WORKOUTS[todayKey]) selectedDay = todayKey;
+  renderWeek();
+  if (selectedDay) renderDayDetail();
+}
+
+init();
+</script>
+</body>
+</html>
